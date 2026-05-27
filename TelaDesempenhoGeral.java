@@ -3,6 +3,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.*;
+import java.sql.*;
 import java.util.List;
 
 /**
@@ -77,8 +78,8 @@ public class TelaDesempenhoGeral extends JPanel {
 
         // Legenda abaixo da tabela
         JLabel lblLegenda = new JLabel(
-            "* Dados de alunos fictícios para demonstração. "
-            + "O aluno logado aparece no fim da lista quando possui histórico."
+            "Alunos carregados do banco de dados. "
+            + "O aluno logado aparece com estatísticas reais quando possui partidas registradas."
         );
         lblLegenda.setFont(new Font("Segoe UI", Font.PLAIN, 11));
         lblLegenda.setForeground(JanelaJogo.COR_TEXTO_CINZA);
@@ -101,17 +102,32 @@ public class TelaDesempenhoGeral extends JPanel {
      */
     public void carregarDados() {
         cabecalho.atualizar();
-        modeloTabela.setRowCount(0); // limpa linhas anteriores
+        modeloTabela.setRowCount(0);
 
-        // Alunos fictícios (dados de demonstração)
-        adicionarLinha("ana.souza",      8, 62, "78%", 620);
-        adicionarLinha("carlos.lima",    5, 33, "66%", 330);
-        adicionarLinha("joana.ferreira", 3, 21, "70%", 210);
-        adicionarLinha("lucas.pereira", 10, 85, "85%", 1020);
-        adicionarLinha("maria.alves",    6, 44, "73%", 440);
-
-        // Aluno atualmente logado (se tiver histórico)
         Usuario u = jogo.getUsuarioLogado();
+        String nomeLogado = (u != null && !u.isProfessor()) ? u.getNome() : null;
+
+        // Carrega todos os alunos do banco; o aluno logado com histórico é
+        // omitido aqui e re-adicionado abaixo com estatísticas reais.
+        try (Connection con = DatabaseConnection.getConexao();
+             PreparedStatement ps = con.prepareStatement(
+                 "SELECT nome FROM usuarios WHERE UPPER(tipo_usuario) = 'ALUNO' ORDER BY nome");
+             ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                String nome = rs.getString("nome");
+                boolean eLogadoComHistorico = nome.equals(nomeLogado)
+                        && u != null && !u.getHistorico().isEmpty();
+                if (!eLogadoComHistorico) {
+                    adicionarLinha(nome, 0, 0, "—", 0);
+                }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        // Aluno logado com dados reais de histórico em memória
         if (u != null && !u.isProfessor() && !u.getHistorico().isEmpty()) {
             List<ResultadoQuiz> hist = u.getHistorico();
             int totalAcertos   = 0;

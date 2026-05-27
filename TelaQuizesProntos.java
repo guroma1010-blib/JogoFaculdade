@@ -1,6 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -192,7 +193,7 @@ public class TelaQuizesProntos extends JPanel {
         JPanel header = new JPanel(new BorderLayout(16, 0));
         header.setBackground(Color.WHITE);
         header.setAlignmentX(Component.LEFT_ALIGNMENT);
-        header.setMaximumSize(new Dimension(Integer.MAX_VALUE, 50));
+        header.setMaximumSize(new Dimension(Integer.MAX_VALUE, 60));
         header.setBorder(BorderFactory.createCompoundBorder(
             BorderFactory.createMatteBorder(0, 4, 0, 0, corDif),
             BorderFactory.createEmptyBorder(12, 14, 12, 14)
@@ -213,6 +214,21 @@ public class TelaQuizesProntos extends JPanel {
         lblMeta.setFont(new Font("Segoe UI", Font.PLAIN, 12));
         lblMeta.setForeground(JanelaJogo.COR_TEXTO_CINZA);
         direita.add(lblMeta);
+
+        if (SessaoUsuario.getInstancia().isProfessor()) {
+            JButton btnEditar = new JButton("Editar Perguntas");
+            btnEditar.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+            btnEditar.setForeground(JanelaJogo.COR_AZUL);
+            btnEditar.setBackground(Color.WHITE);
+            btnEditar.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(JanelaJogo.COR_AZUL, 1, true),
+                BorderFactory.createEmptyBorder(4, 10, 4, 10)
+            ));
+            btnEditar.setFocusPainted(false);
+            btnEditar.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+            btnEditar.addActionListener(e -> abrirDialogoEdicao(quiz));
+            direita.add(btnEditar);
+        }
 
         header.add(esquerda, BorderLayout.WEST);
         header.add(direita,  BorderLayout.EAST);
@@ -285,6 +301,85 @@ public class TelaQuizesProntos extends JPanel {
             case DIFICIL: return JanelaJogo.COR_VERMELHO;
             default:      return JanelaJogo.COR_TEXTO_CINZA;
         }
+    }
+
+    // ------------------------------------------------------------------
+    //  Diálogo de edição de perguntas (em memória)
+    // ------------------------------------------------------------------
+
+    private void abrirDialogoEdicao(Quiz quiz) {
+        Window parent = SwingUtilities.getWindowAncestor(this);
+        JDialog dialog = new JDialog(parent, "Editar Perguntas — " + quiz.getNome(),
+                Dialog.ModalityType.APPLICATION_MODAL);
+        dialog.setSize(680, 500);
+        dialog.setLocationRelativeTo(parent);
+        dialog.setLayout(new BorderLayout());
+
+        List<Pergunta> perguntas = quiz.getPerguntas();
+        List<JTextArea> campos = new ArrayList<>();
+
+        JPanel corpo = new JPanel();
+        corpo.setLayout(new BoxLayout(corpo, BoxLayout.Y_AXIS));
+        corpo.setBorder(BorderFactory.createEmptyBorder(16, 20, 16, 20));
+        corpo.setBackground(Color.WHITE);
+
+        for (int i = 0; i < perguntas.size(); i++) {
+            JLabel lblNum = new JLabel("Pergunta " + (i + 1));
+            lblNum.setFont(new Font("Segoe UI", Font.BOLD, 12));
+            lblNum.setForeground(JanelaJogo.COR_VERMELHO);
+            lblNum.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+            JTextArea area = new JTextArea(perguntas.get(i).getEnunciado());
+            area.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+            area.setLineWrap(true);
+            area.setWrapStyleWord(true);
+            area.setRows(2);
+            area.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(JanelaJogo.COR_BORDA, 1),
+                BorderFactory.createEmptyBorder(6, 8, 6, 8)
+            ));
+            area.setAlignmentX(Component.LEFT_ALIGNMENT);
+            campos.add(area);
+
+            corpo.add(lblNum);
+            corpo.add(Box.createVerticalStrut(4));
+            corpo.add(area);
+            corpo.add(Box.createVerticalStrut(14));
+        }
+
+        JPanel rodape = new JPanel(new FlowLayout(FlowLayout.RIGHT, 12, 10));
+        rodape.setBackground(JanelaJogo.COR_FUNDO);
+        rodape.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, JanelaJogo.COR_BORDA));
+
+        JButton btnCancelar = new JButton("Cancelar");
+        btnCancelar.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        btnCancelar.setFocusPainted(false);
+        btnCancelar.addActionListener(e -> dialog.dispose());
+
+        JButton btnSalvar = new JButton("Salvar");
+        btnSalvar.setFont(new Font("Segoe UI", Font.BOLD, 13));
+        btnSalvar.setBackground(JanelaJogo.COR_VERMELHO);
+        btnSalvar.setForeground(Color.WHITE);
+        btnSalvar.setBorderPainted(false);
+        btnSalvar.setFocusPainted(false);
+        btnSalvar.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        btnSalvar.addActionListener(e -> {
+            for (int i = 0; i < perguntas.size(); i++) {
+                String novo = campos.get(i).getText().trim();
+                if (!novo.isEmpty()) {
+                    perguntas.get(i).setEnunciado(novo);
+                }
+            }
+            atualizarLista();
+            dialog.dispose();
+        });
+
+        rodape.add(btnCancelar);
+        rodape.add(btnSalvar);
+
+        dialog.add(new JScrollPane(corpo), BorderLayout.CENTER);
+        dialog.add(rodape, BorderLayout.SOUTH);
+        dialog.setVisible(true);
     }
 
     private JButton criarBotaoVoltar() {

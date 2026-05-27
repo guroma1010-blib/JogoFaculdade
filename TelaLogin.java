@@ -147,7 +147,7 @@ public class TelaLogin extends JPanel {
             return;
         }
 
-        String sql = "SELECT id, codigo_num_individual, nome, email_completo, tipo_usuario " +
+        String sql = "SELECT id_usuario, codigo_num_individual, nome, email_completo, tipo_usuario " +
                      "FROM usuarios WHERE email_completo = ? AND senha = ?";
 
         try (Connection con = DatabaseConnection.getConexao();
@@ -160,7 +160,7 @@ public class TelaLogin extends JPanel {
                 if (rs.next()) {
                     // Login bem-sucedido — inicia a sessão
                     SessaoUsuario.getInstancia().iniciarSessao(
-                        rs.getInt("id"),
+                        rs.getInt("id_usuario"),
                         rs.getString("codigo_num_individual"),
                         rs.getString("nome"),
                         rs.getString("email_completo"),

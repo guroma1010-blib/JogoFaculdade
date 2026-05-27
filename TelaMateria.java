@@ -12,11 +12,11 @@ import java.util.List;
  * Os dados são agrupados por 'categoria' (aba) e 'grupo' (card dentro da aba).
  *
  * Esquema esperado da tabela 'materiais':
- *   id       INT
- *   nome     VARCHAR  — ex: "Béquer"
- *   categoria VARCHAR  — ex: "Vidrarias", "Equipamentos", "Sistemas", "Segurança"
- *   grupo    VARCHAR  — ex: "MEDIÇÃO", "PIPETAS" (título do card)
- *   descricao VARCHAR  — ex: "misturar e aquecer"
+ *   id_material INT
+ *   nome        VARCHAR  — ex: "Béquer"
+ *   categoria   VARCHAR  — ex: "Vidraria", "Equipamento", "Sistema"
+ *   grupo       VARCHAR  — ex: "MEDIÇÃO", "PIPETAS" (título do card; padrão = categoria)
+ *   descricao   VARCHAR  — ex: "misturar e aquecer"
  */
 public class TelaMateria extends JPanel {
 
@@ -24,7 +24,7 @@ public class TelaMateria extends JPanel {
     private Cabecalho  cabecalho;
 
     private JButton[] botoesTema;
-    private String[]  nomesTema = {"Vidrarias", "Equipamentos", "Sistemas", "Segurança"};
+    private String[]  nomesTema = {"Vidrarias", "Equipamentos", "Sistemas"};
 
     private JPanel areConteudo;
 
@@ -98,7 +98,7 @@ public class TelaMateria extends JPanel {
             dadosDB.put(cat, new LinkedHashMap<>());
         }
 
-        String sql = "SELECT nome, categoria, grupo, descricao FROM materiais ORDER BY categoria, grupo, id";
+        String sql = "SELECT nome, categoria, COALESCE(grupo, categoria) AS grupo, descricao FROM materiais ORDER BY categoria, grupo, id_material";
 
         try (Connection con = DatabaseConnection.getConexao();
              PreparedStatement ps = con.prepareStatement(sql);
@@ -157,9 +157,6 @@ public class TelaMateria extends JPanel {
         sist.put("SEPARAÇÃO", Arrays.asList("Filtração: separa sólido de líquido.", "Destilação: separa por ponto de ebulição.", "Decantação: separa líquidos imiscíveis.", "Centrifugação: usa força centrífuga."));
         sist.put("REAÇÕES",   Arrays.asList("Síntese: A + B → AB.", "Decomposição: AB → A + B.", "Neutralização: ácido + base → sal + H₂O.", "Oxirredução: transferência de elétrons."));
 
-        Map<String, List<String>> seg = dadosDB.get("Segurança");
-        seg.put("EPIs OBRIGATÓRIOS", Arrays.asList("Jaleco: protege a roupa.", "Óculos: protege os olhos.", "Luvas: protege as mãos.", "Máscara: evita inalação de vapores."));
-        seg.put("NORMAS GERAIS",     Arrays.asList("Nunca pipete com a boca.", "Identifique todos os frascos.", "Não coma/beba no laboratório.", "Descarte resíduos adequadamente."));
     }
 
     // ------------------------------------------------------------------
@@ -266,7 +263,6 @@ public class TelaMateria extends JPanel {
             case "Vidrarias":    return "Vidrarias são os recipientes usados para conter, misturar, medir e transferir substâncias.";
             case "Equipamentos": return "Equipamentos auxiliam nas operações de laboratório.";
             case "Sistemas":     return "Sistemas de separação de misturas e reações químicas.";
-            case "Segurança":    return "Segurança é fundamental no laboratório. Use sempre os EPIs corretos.";
             default:             return "Conteúdo de " + categoria + ".";
         }
     }

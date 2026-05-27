@@ -77,4 +77,6 @@ public class Pergunta {
     public String   getDica()              { return dica; }
     /** Retorna o caminho absoluto da imagem, ou null se não houver. */
     public String   getCaminhoImagem()     { return caminhoImagem; }
+
+    public void setEnunciado(String enunciado) { this.enunciado = enunciado; }
 }
