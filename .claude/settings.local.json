@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(Get-Command java -ErrorAction SilentlyContinue | Select-Object Source; $env:JAVA_HOME; [System.Environment]::GetEnvironmentVariable\\(\"JAVA_HOME\",\"Machine\"\\))",
+      "PowerShell(Get-ChildItem \"C:\\\\Program Files \\(x86\\)\\\\Java\" -ErrorAction SilentlyContinue | Select-Object Name; Get-ChildItem \"C:\\\\Users\\\\User\\\\AppData\\\\Local\\\\Programs\" -ErrorAction SilentlyContinue | Where-Object { $_.Name -match \"java|jdk|eclipse|intellij|netbeans\" } | Select-Object Name)",
+      "PowerShell(Get-Item \"C:\\\\Users\\\\User\\\\Downloads\\\\JogoFaculdade\\\\lib\\\\mysql-connector-j-9.2.0.jar\" | Select-Object Name, @{N=\"Tamanho \\(KB\\)\";E={[math]::Round\\($_.Length/1KB\\)}})",
+      "PowerShell(Get-ChildItem \"$env:USERPROFILE\\\\.jdks\", \"$env:USERPROFILE\\\\AppData\\\\Roaming\\\\Code\", \"C:\\\\Users\\\\User\\\\.vscode\" -Recurse -Filter \"javac.exe\" -ErrorAction SilentlyContinue | Select-Object -First 3 FullName)"
+    ]
+  }
+}

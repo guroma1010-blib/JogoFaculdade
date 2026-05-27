@@ -1,0 +1,19 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Main",
+            "request": "launch",
+            "mainClass": "Main",
+            "projectName": "JogoFaculdade_e2f4f667"
+        },
+        {
+            "type": "java",
+            "name": "QuimQuest",
+            "request": "launch",
+            "mainClass": "Main",
+            "projectName": "JogoFaculdade"
+        }
+    ]
+}
