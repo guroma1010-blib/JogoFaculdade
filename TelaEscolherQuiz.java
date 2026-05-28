@@ -30,30 +30,26 @@ public class TelaEscolherQuiz extends JPanel {
         cabecalho = new Cabecalho(jogo, JanelaJogo.TELA_MENU_ALUNO);
         add(cabecalho, BorderLayout.NORTH);
 
-        // Área de conteúdo rolável
+        // Área de conteúdo rolável — margens laterais confortáveis, cards
+        // se esticam horizontalmente para preencher o espaço disponível.
         JPanel conteudo = new JPanel();
         conteudo.setBackground(JanelaJogo.COR_FUNDO);
         conteudo.setLayout(new BoxLayout(conteudo, BoxLayout.Y_AXIS));
-        conteudo.setBorder(BorderFactory.createEmptyBorder(24, 36, 24, 36));
+        conteudo.setBorder(BorderFactory.createEmptyBorder(24, 60, 24, 60));
 
-        // Botão "← Voltar"
-        /*
-         * REGRA DO BoxLayout.Y_AXIS: todos os filhos diretos precisam ter
-         * o mesmo AlignmentX. Aqui usamos LEFT_ALIGNMENT (0.0f) em tudo.
-         * FlowLayout panels (linhaBotao, linhaTitulo) têm AlignmentX padrão
-         * de 0.5f (CENTER) se não for explicitamente definido — isso causava
-         * o deslocamento horizontal relatado.
-         */
+        // Botão "← Voltar" — setMaximumSize(preferred) impede o BoxLayout.Y_AXIS
+        // de esticar o botão verticalmente quando sobra espaço na tela.
         JButton btnVoltar = criarBotaoVoltar();
-        JPanel linhaBotao = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
-        linhaBotao.setOpaque(false);
-        linhaBotao.setAlignmentX(Component.LEFT_ALIGNMENT); // ← correção
-        linhaBotao.add(btnVoltar);
+        btnVoltar.setAlignmentX(Component.LEFT_ALIGNMENT);
+        btnVoltar.setMaximumSize(btnVoltar.getPreferredSize());
 
-        // Título "Escolha um Quiz"
-        JPanel linhaTitulo = new JPanel(new FlowLayout(FlowLayout.LEFT, 4, 0));
+        // Título "Escolha um " + "Quiz" em vermelho — painel X_AXIS com
+        // altura máxima travada para não inflar junto com o espaço extra.
+        JPanel linhaTitulo = new JPanel();
         linhaTitulo.setOpaque(false);
-        linhaTitulo.setAlignmentX(Component.LEFT_ALIGNMENT); // ← correção
+        linhaTitulo.setLayout(new BoxLayout(linhaTitulo, BoxLayout.X_AXIS));
+        linhaTitulo.setAlignmentX(Component.LEFT_ALIGNMENT);
+        linhaTitulo.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40));
 
         JLabel lblEscolha = new JLabel("Escolha um ");
         lblEscolha.setFont(new Font("Segoe UI", Font.BOLD, 24));
@@ -69,13 +65,16 @@ public class TelaEscolherQuiz extends JPanel {
         painelLista = new JPanel();
         painelLista.setOpaque(false);
         painelLista.setLayout(new BoxLayout(painelLista, BoxLayout.Y_AXIS));
-        painelLista.setAlignmentX(Component.LEFT_ALIGNMENT); // ← correção
+        painelLista.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        conteudo.add(linhaBotao);
-        conteudo.add(Box.createVerticalStrut(12));
+        conteudo.add(btnVoltar);
+        conteudo.add(Box.createVerticalStrut(10));
         conteudo.add(linhaTitulo);
-        conteudo.add(Box.createVerticalStrut(24));
+        conteudo.add(Box.createVerticalStrut(12));
         conteudo.add(painelLista);
+        // Glue absorbe todo o espaço vertical restante, mantendo os elementos
+        // compactados no topo sem se espalharem pela tela.
+        conteudo.add(Box.createVerticalGlue());
 
         add(new JScrollPane(conteudo), BorderLayout.CENTER);
     }

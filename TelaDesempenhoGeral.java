@@ -32,10 +32,12 @@ public class TelaDesempenhoGeral extends JPanel {
         cabecalho = new Cabecalho(jogo, JanelaJogo.TELA_MENU_PROFESSOR);
         add(cabecalho, BorderLayout.NORTH);
 
+        // Margens laterais confortáveis; a tabela se estende horizontalmente
+        // para preencher o espaço disponível.
         JPanel conteudo = new JPanel();
         conteudo.setBackground(JanelaJogo.COR_FUNDO);
         conteudo.setLayout(new BoxLayout(conteudo, BoxLayout.Y_AXIS));
-        conteudo.setBorder(BorderFactory.createEmptyBorder(24, 36, 24, 36));
+        conteudo.setBorder(BorderFactory.createEmptyBorder(24, 60, 24, 60));
 
         // Botão "← Voltar"
         JButton btnVoltar = criarBotaoVoltar();
@@ -74,7 +76,6 @@ public class TelaDesempenhoGeral extends JPanel {
         scrollTabela.setAlignmentX(Component.LEFT_ALIGNMENT);
         // Máximo de 400px de altura; a tabela cresce junto com o JScrollPane
         scrollTabela.setMaximumSize(new Dimension(Integer.MAX_VALUE, 400));
-        scrollTabela.setPreferredSize(new Dimension(800, 300));
 
         // Legenda abaixo da tabela
         JLabel lblLegenda = new JLabel(
