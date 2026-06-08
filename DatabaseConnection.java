@@ -2,16 +2,6 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-/**
- * Utilitário de conexão com o banco MySQL — QuimQuest.
- *
- * Uso:
- *   try (Connection con = DatabaseConnection.getConexao()) {
- *       // usar con normalmente
- *   } catch (SQLException e) {
- *       e.printStackTrace();
- *   }
- */
 public class DatabaseConnection {
 
     private static final String URL     = "jdbc:mysql://localhost:3306/QuimQuest"
@@ -22,12 +12,6 @@ public class DatabaseConnection {
 
     private DatabaseConnection() {}
 
-    /**
-     * Abre e retorna uma conexão com o banco.
-     * O chamador é responsável por fechar a conexão (use try-with-resources).
-     *
-     * @throws SQLException se o driver não for encontrado ou a conexão falhar
-     */
     public static Connection getConexao() throws SQLException {
         System.out.println("[DB] Tentando conectar em: " + URL);
         try {
@@ -45,10 +29,6 @@ public class DatabaseConnection {
         return con;
     }
 
-    /**
-     * Testa a conexão ao iniciar o sistema.
-     * Imprime resultado detalhado no terminal.
-     */
     public static void testarConexaoNoTerminal() {
         System.out.println("=== TESTE DE CONEXÃO COM O BANCO ===");
         try (Connection con = getConexao()) {

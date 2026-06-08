@@ -6,17 +6,6 @@ import java.awt.event.*;
 import java.sql.*;
 import java.util.List;
 
-/**
- * Tela "Desempenho dos Alunos" — visão geral do professor.
- *
- * Exibe uma JTable com:
- *   Aluno | Quizzes Feitos | Acertos Totais | % Acertos | Pontos
- *
- * Pré-carrega linhas com alunos fictícios de demonstração.
- * Se o usuário logado for aluno e tiver histórico, aparece como última linha.
- *
- * Chamada por JanelaJogo.abrirDesempenhoGeral().
- */
 public class TelaDesempenhoGeral extends JPanel {
 
     private JanelaJogo         jogo;
@@ -32,21 +21,17 @@ public class TelaDesempenhoGeral extends JPanel {
         cabecalho = new Cabecalho(jogo, JanelaJogo.TELA_MENU_PROFESSOR);
         add(cabecalho, BorderLayout.NORTH);
 
-        // Margens laterais confortáveis; a tabela se estende horizontalmente
-        // para preencher o espaço disponível.
         JPanel conteudo = new JPanel();
         conteudo.setBackground(JanelaJogo.COR_FUNDO);
         conteudo.setLayout(new BoxLayout(conteudo, BoxLayout.Y_AXIS));
         conteudo.setBorder(BorderFactory.createEmptyBorder(24, 60, 24, 60));
 
-        // Botão "← Voltar"
         JButton btnVoltar = criarBotaoVoltar();
         JPanel linhaBotao = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
         linhaBotao.setOpaque(false);
         linhaBotao.setAlignmentX(Component.LEFT_ALIGNMENT);
         linhaBotao.add(btnVoltar);
 
-        // Título "Desempenho dos Alunos"
         JPanel linhaTitulo = new JPanel(new FlowLayout(FlowLayout.LEFT, 4, 0));
         linhaTitulo.setOpaque(false);
         linhaTitulo.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -58,12 +43,11 @@ public class TelaDesempenhoGeral extends JPanel {
         linhaTitulo.add(lblDesempenho);
         linhaTitulo.add(lblAlunos);
 
-        // Tabela
         String[] colunas = {"Aluno", "Quizzes Feitos", "Acertos Totais", "% Acertos", "Pontos"};
         modeloTabela = new DefaultTableModel(colunas, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return false; // somente leitura
+                return false;
             }
         };
 
@@ -74,10 +58,8 @@ public class TelaDesempenhoGeral extends JPanel {
         scrollTabela.getViewport().setBackground(Color.WHITE);
         scrollTabela.setBorder(BorderFactory.createLineBorder(JanelaJogo.COR_BORDA, 1, true));
         scrollTabela.setAlignmentX(Component.LEFT_ALIGNMENT);
-        // Máximo de 400px de altura; a tabela cresce junto com o JScrollPane
         scrollTabela.setMaximumSize(new Dimension(Integer.MAX_VALUE, 400));
 
-        // Legenda abaixo da tabela
         JLabel lblLegenda = new JLabel(
             "Alunos carregados do banco de dados. "
             + "O aluno logado aparece com estatísticas reais quando possui partidas registradas."
@@ -97,10 +79,6 @@ public class TelaDesempenhoGeral extends JPanel {
         add(new JScrollPane(conteudo), BorderLayout.CENTER);
     }
 
-    /**
-     * Reconstrói o conteúdo da tabela.
-     * Chamado por JanelaJogo.abrirDesempenhoGeral() antes de exibir a tela.
-     */
     public void carregarDados() {
         cabecalho.atualizar();
         modeloTabela.setRowCount(0);
@@ -108,8 +86,6 @@ public class TelaDesempenhoGeral extends JPanel {
         Usuario u = jogo.getUsuarioLogado();
         String nomeLogado = (u != null && !u.isProfessor()) ? u.getNome() : null;
 
-        // Carrega todos os alunos do banco; o aluno logado com histórico é
-        // omitido aqui e re-adicionado abaixo com estatísticas reais.
         try (Connection con = DatabaseConnection.getConexao();
              PreparedStatement ps = con.prepareStatement(
                  "SELECT nome FROM usuarios WHERE UPPER(tipo_usuario) = 'ALUNO' ORDER BY nome");
@@ -128,7 +104,6 @@ public class TelaDesempenhoGeral extends JPanel {
             e.printStackTrace();
         }
 
-        // Aluno logado com dados reais de histórico em memória
         if (u != null && !u.isProfessor() && !u.getHistorico().isEmpty()) {
             List<ResultadoQuiz> hist = u.getHistorico();
             int totalAcertos   = 0;
@@ -148,10 +123,6 @@ public class TelaDesempenhoGeral extends JPanel {
         modeloTabela.addRow(new Object[]{nome, quizzes, acertos, pct, pontos});
     }
 
-    // ------------------------------------------------------------------
-    //  Construção da JTable
-    // ------------------------------------------------------------------
-
     private JTable construirTabela(String[] colunas) {
         JTable tabela = new JTable(modeloTabela);
         tabela.setFont(new Font("Segoe UI", Font.PLAIN, 13));
@@ -163,23 +134,19 @@ public class TelaDesempenhoGeral extends JPanel {
         tabela.setSelectionForeground(JanelaJogo.COR_TEXTO_ESCURO);
         tabela.setFillsViewportHeight(true);
 
-        // Cabeçalho
         tabela.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 12));
         tabela.getTableHeader().setBackground(JanelaJogo.COR_FUNDO);
         tabela.getTableHeader().setForeground(JanelaJogo.COR_TEXTO_CINZA);
         tabela.getTableHeader().setReorderingAllowed(false);
 
-        // Alinha ao centro as colunas numéricas (1 em diante)
         DefaultTableCellRenderer centralizador = new DefaultTableCellRenderer();
         centralizador.setHorizontalAlignment(SwingConstants.CENTER);
         for (int i = 1; i < colunas.length; i++) {
             tabela.getColumnModel().getColumn(i).setCellRenderer(centralizador);
         }
 
-        // Largura preferencial da coluna "Aluno"
         tabela.getColumnModel().getColumn(0).setPreferredWidth(220);
 
-        // Linhas alternadas em zebra
         tabela.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
             @Override
             public Component getTableCellRendererComponent(
@@ -201,10 +168,6 @@ public class TelaDesempenhoGeral extends JPanel {
 
         return tabela;
     }
-
-    // ------------------------------------------------------------------
-    //  Helpers
-    // ------------------------------------------------------------------
 
     private JButton criarBotaoVoltar() {
         JButton btn = new JButton("← Voltar");

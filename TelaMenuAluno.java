@@ -3,25 +3,11 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.List;
 
-/**
- * Menu principal do aluno ("Painel do Aluno").
- *
- * Exibe:
- *   - Cabeçalho vermelho com nome, pontos, Início e Sair
- *   - Saudação "Olá, <nome>"
- *   - Três cards de ação: JOGAR, MATÉRIA, DESEMPENHO INDIVIDUAL
- *   - Stats rápidos: Meus pontos e Quizzes feitos
- *   - Meu Histórico (últimos quizzes feitos)
- *
- * O método atualizarDados() atualiza tudo com os dados do usuário logado.
- * Ele é chamado por JanelaJogo antes de mostrar esta tela.
- */
 public class TelaMenuAluno extends JPanel {
 
     private JanelaJogo jogo;
     private Cabecalho  cabecalho;
 
-    // Componentes que mudam conforme o usuário
     private JLabel       lblSaudacao;
     private JLabel       lblPontos;
     private JLabel       lblQuizzesFeitosNum;
@@ -33,11 +19,9 @@ public class TelaMenuAluno extends JPanel {
         setBackground(JanelaJogo.COR_FUNDO);
         setLayout(new BorderLayout());
 
-        // O cabeçalho está na parte de cima; "Início" leva para esta mesma tela
         cabecalho = new Cabecalho(jogo, JanelaJogo.TELA_MENU_ALUNO);
         add(cabecalho, BorderLayout.NORTH);
 
-        // Conteúdo central (rolável)
         JPanel conteudo = new JPanel();
         conteudo.setBackground(JanelaJogo.COR_FUNDO);
         conteudo.setLayout(new BoxLayout(conteudo, BoxLayout.Y_AXIS));
@@ -54,23 +38,19 @@ public class TelaMenuAluno extends JPanel {
         add(new JScrollPane(conteudo), BorderLayout.CENTER);
     }
 
-    // ------------------------------------------------------------------
-    //  Seção: Saudação
-    // ------------------------------------------------------------------
     private JPanel construirSaudacao() {
         JPanel painel = new JPanel();
         painel.setOpaque(false);
         painel.setLayout(new BoxLayout(painel, BoxLayout.Y_AXIS));
         painel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        // "Olá, aluno" — "aluno" em vermelho
         JPanel linhaNome = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
         linhaNome.setOpaque(false);
 
         JLabel lblOla = new JLabel("Olá, ");
         lblOla.setFont(new Font("Segoe UI", Font.BOLD, 30));
 
-        lblSaudacao = new JLabel("aluno"); // atualizado em atualizarDados()
+        lblSaudacao = new JLabel("aluno");
         lblSaudacao.setFont(new Font("Segoe UI", Font.BOLD, 30));
         lblSaudacao.setForeground(JanelaJogo.COR_VERMELHO);
 
@@ -88,9 +68,6 @@ public class TelaMenuAluno extends JPanel {
         return painel;
     }
 
-    // ------------------------------------------------------------------
-    //  Seção: Cards de ação (JOGAR, MATÉRIA, DESEMPENHO)
-    // ------------------------------------------------------------------
     private JPanel construirCardsDeAcao() {
         JPanel linha = new JPanel(new GridLayout(1, 3, 16, 0));
         linha.setOpaque(false);
@@ -127,14 +104,6 @@ public class TelaMenuAluno extends JPanel {
         return linha;
     }
 
-    /**
-     * Cria um card clicável (botão estilizado como card branco).
-     *
-     * @param titulo  texto em destaque (ex: "JOGAR")
-     * @param subtitu texto descritivo menor
-     * @param cor     cor do título
-     * @param acao    o que acontece quando clicado
-     */
     private JPanel criarCardDeAcao(String titulo, String subtitu,
                                     Color cor, ActionListener acao) {
         JPanel card = new JPanel();
@@ -160,7 +129,6 @@ public class TelaMenuAluno extends JPanel {
         card.add(lblSub);
         card.add(Box.createVerticalGlue());
 
-        // O card todo funciona como botão
         card.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
             public void mouseClicked(java.awt.event.MouseEvent e) {
@@ -168,7 +136,7 @@ public class TelaMenuAluno extends JPanel {
             }
             @Override
             public void mouseEntered(java.awt.event.MouseEvent e) {
-                card.setBackground(new Color(248, 248, 248)); // leve destaque
+                card.setBackground(new Color(248, 248, 248));
             }
             @Override
             public void mouseExited(java.awt.event.MouseEvent e) {
@@ -179,9 +147,6 @@ public class TelaMenuAluno extends JPanel {
         return card;
     }
 
-    // ------------------------------------------------------------------
-    //  Seção: Stats rápidos (pontos e quizzes feitos)
-    // ------------------------------------------------------------------
     private JPanel construirStats() {
         JPanel linha = new JPanel(new FlowLayout(FlowLayout.LEFT, 16, 0));
         linha.setOpaque(false);
@@ -201,7 +166,7 @@ public class TelaMenuAluno extends JPanel {
         stat.setBackground(Color.WHITE);
         stat.setLayout(new BoxLayout(stat, BoxLayout.Y_AXIS));
         stat.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createMatteBorder(0, 3, 0, 0, cor), // barra colorida à esquerda
+            BorderFactory.createMatteBorder(0, 3, 0, 0, cor),
             BorderFactory.createEmptyBorder(10, 14, 10, 40)
         ));
 
@@ -217,16 +182,12 @@ public class TelaMenuAluno extends JPanel {
         return stat;
     }
 
-    // ------------------------------------------------------------------
-    //  Seção: Histórico de quizzes
-    // ------------------------------------------------------------------
     private JPanel construirSecaoHistorico() {
         JPanel secao = new JPanel();
         secao.setOpaque(false);
         secao.setLayout(new BoxLayout(secao, BoxLayout.Y_AXIS));
         secao.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        // Título "Meu Histórico"
         JPanel linhaTitulo = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
         linhaTitulo.setOpaque(false);
 
@@ -240,7 +201,6 @@ public class TelaMenuAluno extends JPanel {
         linhaTitulo.add(lblMeu);
         linhaTitulo.add(lblHistorico);
 
-        // Painel onde as linhas do histórico são adicionadas dinamicamente
         painelHistorico = new JPanel();
         painelHistorico.setOpaque(false);
         painelHistorico.setLayout(new BoxLayout(painelHistorico, BoxLayout.Y_AXIS));
@@ -252,14 +212,6 @@ public class TelaMenuAluno extends JPanel {
         return secao;
     }
 
-    // ------------------------------------------------------------------
-    //  Atualização de dados (chamado por JanelaJogo antes de exibir)
-    // ------------------------------------------------------------------
-
-    /**
-     * Atualiza todos os campos dinâmicos com os dados do usuário logado.
-     * Chamado por JanelaJogo.fazerLogin() e sempre que a tela é exibida.
-     */
     public void atualizarDados() {
         cabecalho.atualizar();
 
@@ -270,7 +222,6 @@ public class TelaMenuAluno extends JPanel {
         lblPontos.setText(String.valueOf(u.getPontos()));
         lblQuizzesFeitosNum.setText(String.valueOf(u.getHistorico().size()));
 
-        // Reconstrói o histórico
         painelHistorico.removeAll();
         List<ResultadoQuiz> historico = u.getHistorico();
 
@@ -280,7 +231,6 @@ public class TelaMenuAluno extends JPanel {
             vazio.setForeground(JanelaJogo.COR_TEXTO_CINZA);
             painelHistorico.add(vazio);
         } else {
-            // Exibe do mais recente para o mais antigo
             for (int i = historico.size() - 1; i >= 0; i--) {
                 painelHistorico.add(criarLinhaHistorico(historico.get(i)));
                 painelHistorico.add(Box.createVerticalStrut(6));
@@ -291,7 +241,6 @@ public class TelaMenuAluno extends JPanel {
         repaint();
     }
 
-    /** Cria uma linha do histórico para um resultado de quiz. */
     private JPanel criarLinhaHistorico(ResultadoQuiz r) {
         JPanel linha = new JPanel(new BorderLayout(16, 0));
         linha.setBackground(Color.WHITE);
@@ -301,11 +250,9 @@ public class TelaMenuAluno extends JPanel {
         ));
         linha.setMaximumSize(new Dimension(Integer.MAX_VALUE, 50));
 
-        // Nome do quiz (esquerda)
         JLabel lblNome = new JLabel(r.getNomeQuiz());
         lblNome.setFont(new Font("Segoe UI", Font.PLAIN, 14));
 
-        // Dificuldade + acertos + pontos (direita)
         JPanel direita = new JPanel(new FlowLayout(FlowLayout.RIGHT, 14, 0));
         direita.setOpaque(false);
 
@@ -326,7 +273,6 @@ public class TelaMenuAluno extends JPanel {
         return linha;
     }
 
-    /** Cria o badge colorido de dificuldade. */
     private JLabel badgeDificuldade(Quiz.Dificuldade d) {
         JLabel badge = new JLabel(d.getRotulo().toUpperCase());
         badge.setFont(new Font("Segoe UI", Font.BOLD, 10));

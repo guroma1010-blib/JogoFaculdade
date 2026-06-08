@@ -5,19 +5,6 @@ import java.sql.*;
 import java.util.*;
 import java.util.List;
 
-/**
- * Tela de Matéria — Conteúdo de Química de Laboratório.
- *
- * Carrega os materiais dinamicamente do banco MySQL (tabela 'materiais').
- * Os dados são agrupados por 'categoria' (aba) e 'grupo' (card dentro da aba).
- *
- * Esquema esperado da tabela 'materiais':
- *   id_material INT
- *   nome        VARCHAR  — ex: "Béquer"
- *   categoria   VARCHAR  — ex: "Vidraria", "Equipamento", "Sistema"
- *   grupo       VARCHAR  — ex: "MEDIÇÃO", "PIPETAS" (título do card; padrão = categoria)
- *   descricao   VARCHAR  — ex: "misturar e aquecer"
- */
 public class TelaMateria extends JPanel {
 
     private JanelaJogo jogo;
@@ -28,7 +15,6 @@ public class TelaMateria extends JPanel {
 
     private JPanel areConteudo;
 
-    // Dados carregados do banco: categoria → grupo → lista de descrições
     private Map<String, Map<String, List<String>>> dadosDB = new LinkedHashMap<>();
 
     public TelaMateria(JanelaJogo jogo) {
@@ -86,14 +72,9 @@ public class TelaMateria extends JPanel {
         ativarAba(0);
     }
 
-    /**
-     * Executa SELECT * FROM materiais e monta a estrutura em memória.
-     * Se o banco falhar, mantém os dados hardcoded como fallback.
-     */
     private void carregarDoBanco() {
         dadosDB.clear();
 
-        // Inicializa a estrutura com as categorias na ordem correta
         for (String cat : nomesTema) {
             dadosDB.put(cat, new LinkedHashMap<>());
         }
@@ -110,7 +91,6 @@ public class TelaMateria extends JPanel {
                 String grupo     = rs.getString("grupo");
                 String descricao = rs.getString("descricao");
 
-                // Resolve categoria para o nome exato do nomesTema (case-insensitive)
                 String categoriaNorm = resolverCategoria(categoria);
                 if (categoriaNorm == null) continue;
 
@@ -125,13 +105,11 @@ public class TelaMateria extends JPanel {
         }
     }
 
-    /** Encontra o nome correto da categoria comparando sem case. */
     private String resolverCategoria(String valor) {
         if (valor == null) return null;
         for (String cat : nomesTema) {
             if (cat.equalsIgnoreCase(valor.trim())) return cat;
         }
-        // Tentativa por prefixo (ex: "vidraria" → "Vidrarias")
         String v = valor.trim().toLowerCase();
         for (String cat : nomesTema) {
             if (cat.toLowerCase().startsWith(v) || v.startsWith(cat.toLowerCase().substring(0, Math.min(5, cat.length())))) {
@@ -141,7 +119,6 @@ public class TelaMateria extends JPanel {
         return null;
     }
 
-    /** Dados fixos usados quando o banco não está disponível. */
     private void carregarDadosFallback() {
         Map<String, List<String>> vidrarias = dadosDB.get("Vidrarias");
         vidrarias.put("MEDIÇÃO",   Arrays.asList("Béquer: misturar e aquecer.", "Erlenmeyer: agitar sem respingos.", "Proveta: medir volumes em mL.", "Balão volumétrico: volume exato."));
@@ -156,12 +133,7 @@ public class TelaMateria extends JPanel {
         Map<String, List<String>> sist = dadosDB.get("Sistemas");
         sist.put("SEPARAÇÃO", Arrays.asList("Filtração: separa sólido de líquido.", "Destilação: separa por ponto de ebulição.", "Decantação: separa líquidos imiscíveis.", "Centrifugação: usa força centrífuga."));
         sist.put("REAÇÕES",   Arrays.asList("Síntese: A + B → AB.", "Decomposição: AB → A + B.", "Neutralização: ácido + base → sal + H₂O.", "Oxirredução: transferência de elétrons."));
-
     }
-
-    // ------------------------------------------------------------------
-    //  Construção das abas e conteúdo
-    // ------------------------------------------------------------------
 
     private JPanel construirAbas() {
         JPanel painel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
@@ -207,10 +179,6 @@ public class TelaMateria extends JPanel {
         areConteudo.repaint();
     }
 
-    /**
-     * Monta o painel de conteúdo de uma categoria a partir de dadosDB.
-     * Os grupos formam cards em grade (máx. 2 colunas).
-     */
     private JPanel conteudoCategoria(String categoria) {
         JPanel painel = new JPanel();
         painel.setOpaque(false);
@@ -226,13 +194,11 @@ public class TelaMateria extends JPanel {
             return painel;
         }
 
-        // Frase introdutória baseada na categoria
         JPanel intro = criarFraseIntro(fraseIntro(categoria));
         intro.setAlignmentX(Component.LEFT_ALIGNMENT);
         painel.add(intro);
         painel.add(Box.createVerticalStrut(16));
 
-        // Grade de cards: 2 colunas, N linhas
         List<String> chaves = new ArrayList<>(grupos.keySet());
         int colunas = Math.min(2, chaves.size());
         int linhas  = (int) Math.ceil((double) chaves.size() / colunas);
@@ -246,7 +212,6 @@ public class TelaMateria extends JPanel {
             grade.add(criarCartao(grupo, itens.toArray(new String[0])));
         }
 
-        // GridLayout exige células iguais — preenche células vazias
         int total = linhas * colunas;
         for (int i = chaves.size(); i < total; i++) {
             JPanel vazio = new JPanel();
@@ -266,10 +231,6 @@ public class TelaMateria extends JPanel {
             default:             return "Conteúdo de " + categoria + ".";
         }
     }
-
-    // ------------------------------------------------------------------
-    //  Helpers visuais
-    // ------------------------------------------------------------------
 
     private JPanel criarFraseIntro(String texto) {
         JPanel faixa = new JPanel(new BorderLayout());

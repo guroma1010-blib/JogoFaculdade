@@ -1,7 +1,3 @@
-/**
- * Guarda o resultado de um quiz feito por um aluno.
- * É armazenado no histórico do Usuario.
- */
 public class ResultadoQuiz {
 
     private String           nomeQuiz;
@@ -19,13 +15,10 @@ public class ResultadoQuiz {
         this.pontos         = pontos;
     }
 
-    /** Retorna a porcentagem de acertos neste quiz (0 a 100). */
     public int getPorcentagem() {
         if (totalPerguntas == 0) return 0;
         return (acertos * 100) / totalPerguntas;
     }
-
-    // ---- getters ----
 
     public String           getNomeQuiz()       { return nomeQuiz; }
     public Quiz.Dificuldade getDificuldade()     { return dificuldade; }

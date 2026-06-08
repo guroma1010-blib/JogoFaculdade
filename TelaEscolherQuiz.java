@@ -3,23 +3,11 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.List;
 
-/**
- * Tela de seleção de quiz ("Escolha um Quiz").
- *
- * Exibe a lista de quizzes disponíveis agrupados em:
- *   - "Quizzes do Sistema"  (criados pelos professores da plataforma)
- *   - "Quizzes do Professor" (criados pelo professor logado — a implementar)
- *
- * O aluno clica em um quiz e o jogo chama jogo.iniciarQuiz(quiz).
- *
- * Recebe a lista via carregarQuizzes(), chamado por JanelaJogo antes
- * de mostrar esta tela.
- */
 public class TelaEscolherQuiz extends JPanel {
 
     private JanelaJogo jogo;
     private Cabecalho  cabecalho;
-    private JPanel     painelLista; // painel onde os itens de quiz são montados
+    private JPanel     painelLista;
 
     public TelaEscolherQuiz(JanelaJogo jogo) {
         this.jogo = jogo;
@@ -30,21 +18,15 @@ public class TelaEscolherQuiz extends JPanel {
         cabecalho = new Cabecalho(jogo, JanelaJogo.TELA_MENU_ALUNO);
         add(cabecalho, BorderLayout.NORTH);
 
-        // Área de conteúdo rolável — margens laterais confortáveis, cards
-        // se esticam horizontalmente para preencher o espaço disponível.
         JPanel conteudo = new JPanel();
         conteudo.setBackground(JanelaJogo.COR_FUNDO);
         conteudo.setLayout(new BoxLayout(conteudo, BoxLayout.Y_AXIS));
         conteudo.setBorder(BorderFactory.createEmptyBorder(24, 60, 24, 60));
 
-        // Botão "← Voltar" — setMaximumSize(preferred) impede o BoxLayout.Y_AXIS
-        // de esticar o botão verticalmente quando sobra espaço na tela.
         JButton btnVoltar = criarBotaoVoltar();
         btnVoltar.setAlignmentX(Component.LEFT_ALIGNMENT);
         btnVoltar.setMaximumSize(btnVoltar.getPreferredSize());
 
-        // Título "Escolha um " + "Quiz" em vermelho — painel X_AXIS com
-        // altura máxima travada para não inflar junto com o espaço extra.
         JPanel linhaTitulo = new JPanel();
         linhaTitulo.setOpaque(false);
         linhaTitulo.setLayout(new BoxLayout(linhaTitulo, BoxLayout.X_AXIS));
@@ -61,7 +43,6 @@ public class TelaEscolherQuiz extends JPanel {
         linhaTitulo.add(lblEscolha);
         linhaTitulo.add(lblQuiz);
 
-        // Painel dinâmico com a lista de quizzes
         painelLista = new JPanel();
         painelLista.setOpaque(false);
         painelLista.setLayout(new BoxLayout(painelLista, BoxLayout.Y_AXIS));
@@ -72,22 +53,15 @@ public class TelaEscolherQuiz extends JPanel {
         conteudo.add(linhaTitulo);
         conteudo.add(Box.createVerticalStrut(12));
         conteudo.add(painelLista);
-        // Glue absorbe todo o espaço vertical restante, mantendo os elementos
-        // compactados no topo sem se espalharem pela tela.
         conteudo.add(Box.createVerticalGlue());
 
         add(new JScrollPane(conteudo), BorderLayout.CENTER);
     }
 
-    /**
-     * Recebe a lista de quizzes e reconstrói a exibição.
-     * Chamado por JanelaJogo.abrirEscolhaDeQuiz().
-     */
     public void carregarQuizzes(List<Quiz> quizzes) {
         cabecalho.atualizar();
         painelLista.removeAll();
 
-        // Grupo "Quizzes do Sistema"
         painelLista.add(criarRotuloGrupo("Quizzes do Sistema"));
         painelLista.add(Box.createVerticalStrut(8));
 
@@ -98,7 +72,6 @@ public class TelaEscolherQuiz extends JPanel {
             }
         }
 
-        // Grupo "Quizzes do Professor" — quizzes não criados pelo Sistema
         boolean temProfessor = false;
         for (Quiz q : quizzes) {
             if (!q.getCriadoPor().equals("Sistema")) {
@@ -124,7 +97,6 @@ public class TelaEscolherQuiz extends JPanel {
         repaint();
     }
 
-    /** Cria o rótulo de seção (ex: "Quizzes do Sistema"). */
     private JLabel criarRotuloGrupo(String texto) {
         JLabel lbl = new JLabel(texto);
         lbl.setFont(new Font("Segoe UI", Font.PLAIN, 13));
@@ -133,18 +105,13 @@ public class TelaEscolherQuiz extends JPanel {
         return lbl;
     }
 
-    /**
-     * Cria uma linha clicável representando um quiz.
-     * Exibe: nome, badge de dificuldade, nº de questões, pontos e autor.
-     */
     private JPanel criarItemQuiz(Quiz quiz) {
         JPanel item = new JPanel(new BorderLayout(16, 0));
         item.setBackground(Color.WHITE);
         item.setMaximumSize(new Dimension(Integer.MAX_VALUE, 60));
-        item.setAlignmentX(Component.LEFT_ALIGNMENT); // ← corrige alinhamento dentro do painelLista
+        item.setAlignmentX(Component.LEFT_ALIGNMENT);
         item.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
-        // Barra colorida à esquerda (cor da dificuldade)
         item.setBorder(BorderFactory.createCompoundBorder(
             BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(JanelaJogo.COR_BORDA, 1, true),
@@ -153,7 +120,6 @@ public class TelaEscolherQuiz extends JPanel {
             BorderFactory.createEmptyBorder(10, 14, 10, 14)
         ));
 
-        // ---- Lado esquerdo: nome + badge ----
         JPanel esquerda = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
         esquerda.setOpaque(false);
 
@@ -165,7 +131,6 @@ public class TelaEscolherQuiz extends JPanel {
         esquerda.add(lblNome);
         esquerda.add(badge);
 
-        // ---- Lado direito: info + seta ----
         JPanel direita = new JPanel(new FlowLayout(FlowLayout.RIGHT, 14, 0));
         direita.setOpaque(false);
 
@@ -186,7 +151,6 @@ public class TelaEscolherQuiz extends JPanel {
         item.add(esquerda, BorderLayout.WEST);
         item.add(direita,  BorderLayout.EAST);
 
-        // Clique inicia o quiz
         item.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
             public void mouseClicked(java.awt.event.MouseEvent e) {

@@ -1,21 +1,8 @@
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Fábrica de dados de demonstração.
- *
- * Em um projeto real, estes dados viriam de um banco de dados.
- * Por enquanto, criamos os quizzes diretamente no código para
- * poder testar o jogo sem precisar de banco de dados.
- *
- * Baseado nos quizzes visíveis nas telas do Figma:
- *   - Quiz de Vidrarias (Fácil  / Sistema)
- *   - Quiz de Química Geral (Médio / Sistema)
- *   - Quiz Avançado (Difícil / Sistema)
- */
 public class DadosDemostracao {
 
-    /** Retorna a lista de quizzes pré-cadastrados no sistema. */
     public static List<Quiz> criarQuizzesDemostracao() {
         List<Quiz> lista = new ArrayList<>();
 
@@ -26,9 +13,6 @@ public class DadosDemostracao {
         return lista;
     }
 
-    // ------------------------------------------------------------------
-    //  Quiz 1 — Vidrarias (Fácil)
-    // ------------------------------------------------------------------
     private static Quiz criarQuizVidrarias() {
         Quiz quiz = new Quiz("Quiz de Vidrarias", Quiz.Dificuldade.FACIL, "Sistema");
 
@@ -40,7 +24,7 @@ public class DadosDemostracao {
                 "Mede temperatura",
                 "Aquece substâncias"
             },
-            1,  // B é a correta
+            1,
             "Pense em dois líquidos que não se misturam, como óleo e água."
         ));
 
@@ -52,7 +36,7 @@ public class DadosDemostracao {
                 "Filtrar substâncias",
                 "Armazenar gases"
             },
-            1,  // B é a correta
+            1,
             "O béquer tem formato de copo largo e escala aproximada."
         ));
 
@@ -64,7 +48,7 @@ public class DadosDemostracao {
                 "Medir volumes com precisão",
                 "Armazenar ácidos"
             },
-            2,  // C é a correta
+            2,
             "É uma vidraria cilíndrica alta e graduada em mL."
         ));
 
@@ -76,7 +60,7 @@ public class DadosDemostracao {
                 "Balão volumétrico",
                 "Bureta"
             },
-            1,  // B é a correta
+            1,
             "Tem formato cônico com gargalo estreito."
         ));
 
@@ -88,16 +72,13 @@ public class DadosDemostracao {
                 "Pipeta volumétrica",
                 "Béquer"
             },
-            2,  // C é a correta
+            2,
             "Tem apenas uma marca de calibração."
         ));
 
         return quiz;
     }
 
-    // ------------------------------------------------------------------
-    //  Quiz 2 — Química Geral (Médio)
-    // ------------------------------------------------------------------
     private static Quiz criarQuizQuimicaGeral() {
         Quiz quiz = new Quiz("Quiz de Química Geral", Quiz.Dificuldade.MEDIO, "Sistema");
 
@@ -137,9 +118,6 @@ public class DadosDemostracao {
         return quiz;
     }
 
-    // ------------------------------------------------------------------
-    //  Quiz 3 — Avançado (Difícil)
-    // ------------------------------------------------------------------
     private static Quiz criarQuizAvancado() {
         Quiz quiz = new Quiz("Quiz Avançado", Quiz.Dificuldade.DIFICIL, "Sistema");
 

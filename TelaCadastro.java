@@ -2,17 +2,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.sql.*;
 
-/**
- * Tela de Cadastro de novos usuários.
- *
- * Fluxo:
- *  1. Usuário informa RM/Matrícula, nome completo, senha e tipo (Aluno/Professor).
- *  2. Para professores, exige a chave secreta institucional.
- *  3. O e-mail institucional é gerado automaticamente:
- *       Aluno:     <rm>@aluno.cps.sp.gov.br
- *       Professor: <matricula>@cps.sp.gov.br
- *  4. O registro é inserido na tabela 'usuarios'.
- */
 public class TelaCadastro extends JPanel {
 
     private JanelaJogo jogo;
@@ -47,7 +36,6 @@ public class TelaCadastro extends JPanel {
             BorderFactory.createEmptyBorder(32, 48, 32, 48)
         ));
 
-        // Logo
         JPanel painelLogo = new JPanel(new FlowLayout(FlowLayout.CENTER, 4, 0));
         painelLogo.setBackground(Color.WHITE);
         painelLogo.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -62,7 +50,6 @@ public class TelaCadastro extends JPanel {
         painelLogo.add(lblT);
         painelLogo.add(lblEtec);
 
-        // Título
         JLabel lblTitulo = new JLabel("Criar conta");
         lblTitulo.setFont(new Font("Segoe UI", Font.BOLD, 20));
         JPanel painelTitulo = centralizar(lblTitulo);
@@ -76,25 +63,21 @@ public class TelaCadastro extends JPanel {
         sep.setAlignmentX(Component.LEFT_ALIGNMENT);
         sep.setMaximumSize(new Dimension(Integer.MAX_VALUE, 1));
 
-        // Campo: Código Individual (RM/Matrícula)
         JLabel lblCodigo = rotuloCampo("CÓDIGO DE IDENTIFICAÇÃO (RM / MATRÍCULA)");
         campoCodigo = new JTextField();
         campoCodigo.setToolTipText("Apenas números — ex: 12345");
         estilizarCampo(campoCodigo);
 
-        // Campo: Nome Completo
         JLabel lblNome = rotuloCampo("NOME COMPLETO");
         campoNome = new JTextField();
         estilizarCampo(campoNome);
 
-        // Campo: Perfil (Aluno / Professor)
         JLabel lblPerfil = rotuloCampo("PERFIL");
         comboPerfil = new JComboBox<>(new String[]{"Aluno", "Professor"});
         comboPerfil.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         comboPerfil.setAlignmentX(Component.LEFT_ALIGNMENT);
         comboPerfil.setMaximumSize(new Dimension(Integer.MAX_VALUE, 46));
 
-        // Campo: Chave Secreta (apenas professor)
         labelChaveSecreta = rotuloCampo("CHAVE SECRETA (somente professores)");
         campoChaveSecreta = new JPasswordField();
         estilizarCampo(campoChaveSecreta);
@@ -108,23 +91,19 @@ public class TelaCadastro extends JPanel {
             revalidate();
         });
 
-        // Campo: Senha
         JLabel lblSenha = rotuloCampo("SENHA");
         campoSenha = new JPasswordField();
         estilizarCampo(campoSenha);
 
-        // Campo: Confirmar Senha
         JLabel lblConfirmar = rotuloCampo("CONFIRMAR SENHA");
         campoConfirmarSenha = new JPasswordField();
         estilizarCampo(campoConfirmarSenha);
 
-        // Label de erro
         labelErro = new JLabel(" ");
         labelErro.setFont(new Font("Segoe UI", Font.PLAIN, 12));
         labelErro.setForeground(JanelaJogo.COR_VERMELHO);
         JPanel painelErro = centralizar(labelErro);
 
-        // Botão Cadastrar
         JButton btnCadastrar = new JButton("CRIAR CONTA");
         btnCadastrar.setFont(new Font("Segoe UI", Font.BOLD, 15));
         btnCadastrar.setBackground(JanelaJogo.COR_VERMELHO);
@@ -136,7 +115,6 @@ public class TelaCadastro extends JPanel {
         btnCadastrar.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         btnCadastrar.addActionListener(e -> tentarCadastro());
 
-        // Link para voltar ao login
         JButton btnVoltar = new JButton("Já tem conta? Entrar");
         btnVoltar.setFont(new Font("Segoe UI", Font.PLAIN, 12));
         btnVoltar.setForeground(JanelaJogo.COR_AZUL);
@@ -147,7 +125,6 @@ public class TelaCadastro extends JPanel {
         JPanel painelVoltar = centralizar(btnVoltar);
         btnVoltar.addActionListener(e -> jogo.mostrarTela(JanelaJogo.TELA_LOGIN));
 
-        // Montagem
         card.add(painelLogo);
         card.add(Box.createVerticalStrut(8));
         card.add(painelTitulo);
@@ -196,7 +173,6 @@ public class TelaCadastro extends JPanel {
         String confirmar = new String(campoConfirmarSenha.getPassword());
         String perfil  = (String) comboPerfil.getSelectedItem();
 
-        // Validações básicas
         if (codigo.isEmpty() || nome.isEmpty() || senha.isEmpty()) {
             labelErro.setText("Preencha todos os campos obrigatórios.");
             return;
@@ -217,7 +193,6 @@ public class TelaCadastro extends JPanel {
             return;
         }
 
-        // Verificar chave secreta para professores
         boolean eProfessor = "Professor".equals(perfil);
         if (eProfessor) {
             String chave = new String(campoChaveSecreta.getPassword());
@@ -227,12 +202,10 @@ public class TelaCadastro extends JPanel {
             }
         }
 
-        // Gerar e-mail institucional automaticamente
         String tipoUsuario = eProfessor ? "professor" : "aluno";
         String sufixo = eProfessor ? "@cps.sp.gov.br" : "@aluno.cps.sp.gov.br";
         String email  = codigo + sufixo;
 
-        // Inserir no banco
         String sql = "INSERT INTO usuarios (codigo_num_individual, nome, email_completo, senha, tipo_usuario) VALUES (?, ?, ?, ?, ?)";
 
         try (Connection con = DatabaseConnection.getConexao();
@@ -253,7 +226,7 @@ public class TelaCadastro extends JPanel {
             jogo.mostrarTela(JanelaJogo.TELA_LOGIN);
 
         } catch (SQLException e) {
-            e.printStackTrace(); // sempre imprime o erro completo no terminal
+            e.printStackTrace();
             if (e.getErrorCode() == 1062 || (e.getMessage() != null && e.getMessage().contains("Duplicate"))) {
                 labelErro.setText("Código " + codigo + " já cadastrado no sistema.");
             } else {
@@ -261,8 +234,6 @@ public class TelaCadastro extends JPanel {
             }
         }
     }
-
-    // ---- helpers de layout (mesmos da TelaLogin) ----
 
     private JPanel centralizar(JComponent comp) {
         JPanel w = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));

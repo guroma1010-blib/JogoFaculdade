@@ -4,15 +4,6 @@ import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Tela "Quizes Prontos" — visão do professor sobre todos os quizzes cadastrados.
- *
- * Exibe:
- *   - Botões de filtro por dificuldade (Todos / Fácil / Médio / Difícil)
- *   - Cards expansivos com o nome do quiz e a lista de perguntas
- *
- * Chamada por JanelaJogo.abrirQuizesProntos().
- */
 public class TelaQuizesProntos extends JPanel {
 
     private static final String[] CHAVES_FILTRO  = {"TODOS", "FACIL", "MEDIO", "DIFICIL"};
@@ -45,14 +36,12 @@ public class TelaQuizesProntos extends JPanel {
         conteudo.setLayout(new BoxLayout(conteudo, BoxLayout.Y_AXIS));
         conteudo.setBorder(BorderFactory.createEmptyBorder(24, 36, 24, 36));
 
-        // Botão "← Voltar"
         JButton btnVoltar = criarBotaoVoltar();
         JPanel linhaBotao = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
         linhaBotao.setOpaque(false);
         linhaBotao.setAlignmentX(Component.LEFT_ALIGNMENT);
         linhaBotao.add(btnVoltar);
 
-        // Título "Quizes Prontos"
         JPanel linhaTitulo = new JPanel(new FlowLayout(FlowLayout.LEFT, 4, 0));
         linhaTitulo.setOpaque(false);
         linhaTitulo.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -64,10 +53,8 @@ public class TelaQuizesProntos extends JPanel {
         linhaTitulo.add(lblQuizes);
         linhaTitulo.add(lblProntos);
 
-        // Filtros por dificuldade
         JPanel linhaFiltros = criarLinhaFiltros();
 
-        // Painel dinâmico com a lista de cards
         painelLista = new JPanel();
         painelLista.setOpaque(false);
         painelLista.setLayout(new BoxLayout(painelLista, BoxLayout.Y_AXIS));
@@ -84,18 +71,10 @@ public class TelaQuizesProntos extends JPanel {
         add(new JScrollPane(conteudo), BorderLayout.CENTER);
     }
 
-    /**
-     * Atualiza o cabeçalho e recarrega a lista.
-     * Chamado por JanelaJogo.abrirQuizesProntos().
-     */
     public void carregarQuizzes() {
         cabecalho.atualizar();
         atualizarLista();
     }
-
-    // ------------------------------------------------------------------
-    //  Filtros
-    // ------------------------------------------------------------------
 
     private JPanel criarLinhaFiltros() {
         JPanel linha = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 0));
@@ -139,10 +118,6 @@ public class TelaQuizesProntos extends JPanel {
         }
     }
 
-    // ------------------------------------------------------------------
-    //  Lista de quizzes
-    // ------------------------------------------------------------------
-
     private void atualizarLista() {
         painelLista.removeAll();
         List<Quiz> quizzes = jogo.getQuizzesDoDomain();
@@ -176,10 +151,6 @@ public class TelaQuizesProntos extends JPanel {
         return false;
     }
 
-    // ------------------------------------------------------------------
-    //  Card de um quiz (cabeçalho + linhas de perguntas)
-    // ------------------------------------------------------------------
-
     private JPanel criarCardQuiz(Quiz quiz) {
         JPanel card = new JPanel();
         card.setBackground(Color.WHITE);
@@ -189,7 +160,6 @@ public class TelaQuizesProntos extends JPanel {
 
         Color corDif = corDificuldade(quiz.getDificuldade());
 
-        // ---- Cabeçalho do card ----
         JPanel header = new JPanel(new BorderLayout(16, 0));
         header.setBackground(Color.WHITE);
         header.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -234,14 +204,12 @@ public class TelaQuizesProntos extends JPanel {
         header.add(direita,  BorderLayout.EAST);
         card.add(header);
 
-        // Separador entre cabeçalho e perguntas
         JSeparator sep = new JSeparator();
         sep.setForeground(JanelaJogo.COR_BORDA);
         sep.setAlignmentX(Component.LEFT_ALIGNMENT);
         sep.setMaximumSize(new Dimension(Integer.MAX_VALUE, 1));
         card.add(sep);
 
-        // ---- Linhas de perguntas ----
         List<Pergunta> perguntas = quiz.getPerguntas();
         for (int i = 0; i < perguntas.size(); i++) {
             Pergunta p = perguntas.get(i);
@@ -276,10 +244,6 @@ public class TelaQuizesProntos extends JPanel {
         return card;
     }
 
-    // ------------------------------------------------------------------
-    //  Helpers visuais
-    // ------------------------------------------------------------------
-
     private JLabel criarBadge(Quiz.Dificuldade d) {
         JLabel badge = new JLabel(d.getRotulo().toUpperCase());
         badge.setFont(new Font("Segoe UI", Font.BOLD, 10));
@@ -302,10 +266,6 @@ public class TelaQuizesProntos extends JPanel {
             default:      return JanelaJogo.COR_TEXTO_CINZA;
         }
     }
-
-    // ------------------------------------------------------------------
-    //  Diálogo de edição de perguntas (em memória)
-    // ------------------------------------------------------------------
 
     private void abrirDialogoEdicao(Quiz quiz) {
         Window parent = SwingUtilities.getWindowAncestor(this);

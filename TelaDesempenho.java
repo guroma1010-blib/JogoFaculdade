@@ -3,25 +3,11 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.List;
 
-/**
- * Tela de Desempenho — serve para dois propósitos:
- *
- *   1) Resultado imediato após terminar um quiz
- *      → chamada por JanelaJogo.finalizarQuiz(resultado)
- *      → exibe o resultado deste quiz e um botão para jogar de novo
- *
- *   2) Histórico completo do aluno
- *      → chamada por JanelaJogo.abrirDesempenhoIndividual()
- *      → exibe todas as estatísticas e o histórico completo
- *
- * A variável 'modoResultadoImediato' controla qual modo exibir.
- */
 public class TelaDesempenho extends JPanel {
 
     private JanelaJogo jogo;
     private Cabecalho  cabecalho;
 
-    // Painel central reconstruído a cada exibição
     private JPanel areaCentral;
 
     public TelaDesempenho(JanelaJogo jogo) {
@@ -38,13 +24,6 @@ public class TelaDesempenho extends JPanel {
         add(areaCentral, BorderLayout.CENTER);
     }
 
-    // ------------------------------------------------------------------
-    //  Modo 1: Resultado imediato (após terminar um quiz)
-    // ------------------------------------------------------------------
-
-    /**
-     * Chamado por JanelaJogo.finalizarQuiz() logo após o aluno terminar.
-     */
     public void mostrarResultadoDoQuiz(ResultadoQuiz resultado) {
         cabecalho.atualizar();
 
@@ -62,13 +41,11 @@ public class TelaDesempenho extends JPanel {
         painel.setLayout(new BoxLayout(painel, BoxLayout.Y_AXIS));
         painel.setBorder(BorderFactory.createEmptyBorder(28, 36, 28, 36));
 
-        // Botão "← Voltar"
         JPanel linhaBotao = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
         linhaBotao.setOpaque(false);
         linhaBotao.add(criarBotaoVoltar());
         linhaBotao.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        // Título "Resultado"
         JPanel linhaTitulo = new JPanel(new FlowLayout(FlowLayout.LEFT, 4, 0));
         linhaTitulo.setOpaque(false);
         linhaTitulo.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -88,7 +65,6 @@ public class TelaDesempenho extends JPanel {
         lblNomeQuiz.setForeground(JanelaJogo.COR_TEXTO_CINZA);
         lblNomeQuiz.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        // Três cards de stat: acertos, porcentagem, pontos
         JPanel stats = new JPanel(new GridLayout(1, 3, 16, 0));
         stats.setOpaque(false);
         stats.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -106,13 +82,11 @@ public class TelaDesempenho extends JPanel {
         stats.add(criarCardStat("+" + r.getPontos(), "Pontos Ganhos",
             new Color(180, 140, 0)));
 
-        // Mensagem motivacional
         JLabel lblMensagem = new JLabel(mensagemMotivacional(porcento));
         lblMensagem.setFont(new Font("Segoe UI", Font.ITALIC, 14));
         lblMensagem.setForeground(JanelaJogo.COR_TEXTO_CINZA);
         lblMensagem.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        // Botões de ação
         JPanel linhaBotoes = new JPanel(new FlowLayout(FlowLayout.LEFT, 12, 0));
         linhaBotoes.setOpaque(false);
         linhaBotoes.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -132,7 +106,7 @@ public class TelaDesempenho extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 jogo.mostrarTela(JanelaJogo.TELA_MENU_ALUNO);
-                jogo.getTelaMenuAluno().atualizarDados(); // atualiza pontos no menu
+                jogo.getTelaMenuAluno().atualizarDados();
             }
         });
 
@@ -154,13 +128,6 @@ public class TelaDesempenho extends JPanel {
         return painel;
     }
 
-    // ------------------------------------------------------------------
-    //  Modo 2: Histórico completo (acessado pelo menu do aluno)
-    // ------------------------------------------------------------------
-
-    /**
-     * Chamado por JanelaJogo.abrirDesempenhoIndividual().
-     */
     public void mostrarHistoricoCompleto() {
         cabecalho.atualizar();
 
@@ -178,13 +145,11 @@ public class TelaDesempenho extends JPanel {
         painel.setLayout(new BoxLayout(painel, BoxLayout.Y_AXIS));
         painel.setBorder(BorderFactory.createEmptyBorder(28, 36, 28, 36));
 
-        // Botão "← Voltar"
         JPanel linhaBotao = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
         linhaBotao.setOpaque(false);
         linhaBotao.add(criarBotaoVoltar());
         linhaBotao.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        // Título "Meu Desempenho Individual"
         JPanel linhaTitulo = new JPanel(new FlowLayout(FlowLayout.LEFT, 4, 0));
         linhaTitulo.setOpaque(false);
         linhaTitulo.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -203,7 +168,6 @@ public class TelaDesempenho extends JPanel {
         linhaTitulo.add(lblDesemp);
         linhaTitulo.add(lblInd);
 
-        // Stats gerais
         Usuario u = jogo.getUsuarioLogado();
         List<ResultadoQuiz> historico = (u != null) ? u.getHistorico() : new java.util.ArrayList<ResultadoQuiz>();
 
@@ -222,7 +186,6 @@ public class TelaDesempenho extends JPanel {
         stats.add(criarCardStat(String.valueOf(u != null ? u.getPontos() : 0),
             "Pontos Totais", new Color(180, 140, 0)));
 
-        // Tabela de histórico
         JLabel lblHistorico = new JLabel("Histórico de Quizzes");
         lblHistorico.setFont(new Font("Segoe UI", Font.BOLD, 16));
         lblHistorico.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -257,7 +220,6 @@ public class TelaDesempenho extends JPanel {
             return tabela;
         }
 
-        // Cabeçalho da tabela
         JPanel cabTabela = new JPanel(new GridLayout(1, 5, 0, 0));
         cabTabela.setBackground(new Color(230, 230, 230));
         cabTabela.setBorder(BorderFactory.createEmptyBorder(8, 16, 8, 16));
@@ -271,7 +233,6 @@ public class TelaDesempenho extends JPanel {
         }
         tabela.add(cabTabela);
 
-        // Linhas
         for (ResultadoQuiz r : historico) {
             tabela.add(criarLinhaTabela(r));
             tabela.add(Box.createVerticalStrut(2));
@@ -300,10 +261,6 @@ public class TelaDesempenho extends JPanel {
 
         return linha;
     }
-
-    // ------------------------------------------------------------------
-    //  Helpers visuais
-    // ------------------------------------------------------------------
 
     private JPanel criarCardStat(String valor, String descricao, Color cor) {
         JPanel card = new JPanel();

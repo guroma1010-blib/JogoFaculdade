@@ -1,18 +1,12 @@
-/**
- * Singleton que guarda os dados do usuário autenticado durante a sessão.
- *
- * Substituiu o objeto Usuario passado entre telas — agora qualquer classe
- * acessa SessaoUsuario.getInstancia() para ler nome, tipo, etc.
- */
 public class SessaoUsuario {
 
     private static SessaoUsuario instancia;
 
     private int    id;
-    private String codigoIndividual; // RM (aluno) ou matrícula (professor)
+    private String codigoIndividual;
     private String nome;
     private String email;
-    private String tipoUsuario;      // "aluno" ou "professor"
+    private String tipoUsuario;
 
     private SessaoUsuario() {}
 
@@ -23,7 +17,6 @@ public class SessaoUsuario {
         return instancia;
     }
 
-    /** Preenche os dados após login bem-sucedido. */
     public void iniciarSessao(int id, String codigoIndividual,
                                String nome, String email, String tipoUsuario) {
         this.id               = id;
@@ -33,7 +26,6 @@ public class SessaoUsuario {
         this.tipoUsuario      = tipoUsuario;
     }
 
-    /** Limpa os dados ao fazer logout. */
     public void encerrarSessao() {
         this.id               = 0;
         this.codigoIndividual = null;

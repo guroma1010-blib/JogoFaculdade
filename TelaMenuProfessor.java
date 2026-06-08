@@ -2,15 +2,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
-/**
- * Menu principal do professor ("Painel do Professor").
- *
- * Exibe:
- *   - Cabeçalho vermelho
- *   - Título "Painel do Professor"
- *   - Quatro cards de ação: CRIAR QUIZ, QUIZES PRONTOS, MATÉRIA, DESEMPENHO
- *   - Stats rápidos: Quizes ativos e Alunos
- */
 public class TelaMenuProfessor extends JPanel {
 
     private JanelaJogo jogo;
@@ -45,7 +36,6 @@ public class TelaMenuProfessor extends JPanel {
         painel.setLayout(new BoxLayout(painel, BoxLayout.Y_AXIS));
         painel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        // "Painel do" + "Professor" em vermelho
         JPanel linha = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
         linha.setOpaque(false);
 
@@ -57,7 +47,7 @@ public class TelaMenuProfessor extends JPanel {
         lblProf.setForeground(JanelaJogo.COR_VERMELHO);
 
         linha.add(lblPainel);
-        linha.add(new JLabel(" ")); // espaço
+        linha.add(new JLabel(" "));
         linha.add(lblProf);
 
         JLabel lblSub = new JLabel("Gerencie o conteúdo do jogo");
@@ -77,7 +67,6 @@ public class TelaMenuProfessor extends JPanel {
         linha.setAlignmentX(Component.LEFT_ALIGNMENT);
         linha.setMaximumSize(new Dimension(Integer.MAX_VALUE, 130));
 
-        // Card: CRIAR QUIZ
         linha.add(criarCard("CRIAR QUIZ", "Montar quiz completo",
             JanelaJogo.COR_VERMELHO,
             new ActionListener() {
@@ -88,7 +77,6 @@ public class TelaMenuProfessor extends JPanel {
             }
         ));
 
-        // Card: QUIZES PRONTOS
         linha.add(criarCard("QUIZES PRONTOS", "Gerenciar questões",
             new Color(200, 100, 0),
             new ActionListener() {
@@ -99,7 +87,6 @@ public class TelaMenuProfessor extends JPanel {
             }
         ));
 
-        // Card: MATÉRIA
         linha.add(criarCard("MATÉRIA", "Ver conteúdo",
             JanelaJogo.COR_ROXO,
             new ActionListener() {
@@ -110,7 +97,6 @@ public class TelaMenuProfessor extends JPanel {
             }
         ));
 
-        // Card: DESEMPENHO
         linha.add(criarCard("DESEMPENHO", "Ver alunos",
             JanelaJogo.COR_VERDE,
             new ActionListener() {
@@ -178,7 +164,7 @@ public class TelaMenuProfessor extends JPanel {
         linha.add(criarMiniStat(lblQuizAtivos, "Quizes ativos",
             JanelaJogo.COR_VERMELHO));
 
-        JLabel lblAlunos = new JLabel("1"); // fixo por enquanto
+        JLabel lblAlunos = new JLabel("1");
         linha.add(criarMiniStat(lblAlunos, "Alunos", JanelaJogo.COR_TEXTO_ESCURO));
 
         return linha;
@@ -205,7 +191,6 @@ public class TelaMenuProfessor extends JPanel {
         return stat;
     }
 
-    /** Chamado por JanelaJogo antes de mostrar esta tela. */
     public void atualizarDados() {
         cabecalho.atualizar();
         revalidate();

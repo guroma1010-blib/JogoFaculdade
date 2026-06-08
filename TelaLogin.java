@@ -2,14 +2,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.sql.*;
 
-/**
- * Tela de Login do QuimQuest.
- *
- * Autenticação via banco MySQL:
- *   SELECT por 'email_completo' e 'senha' na tabela 'usuarios'.
- *   Ao autenticar, os dados ficam em SessaoUsuario (singleton) e o
- *   usuário é redirecionado para TelaMenuAluno ou TelaMenuProfessor.
- */
 public class TelaLogin extends JPanel {
 
     private JanelaJogo     jogo;
@@ -34,7 +26,6 @@ public class TelaLogin extends JPanel {
             BorderFactory.createEmptyBorder(36, 48, 36, 48)
         ));
 
-        // Logo "TEtec"
         JPanel painelLogo = new JPanel(new FlowLayout(FlowLayout.CENTER, 4, 0));
         painelLogo.setBackground(Color.WHITE);
         painelLogo.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -49,34 +40,28 @@ public class TelaLogin extends JPanel {
         painelLogo.add(lblT);
         painelLogo.add(lblEtec);
 
-        // Escola
         JLabel lblEscola = new JLabel("Júlio de Mesquita · São Caetano do Sul");
         lblEscola.setFont(new Font("Segoe UI", Font.PLAIN, 13));
         lblEscola.setForeground(JanelaJogo.COR_TEXTO_CINZA);
         JPanel painelEscola = centralizar(lblEscola);
 
-        // Separador
         JSeparator sep = new JSeparator();
         sep.setAlignmentX(Component.LEFT_ALIGNMENT);
         sep.setMaximumSize(new Dimension(Integer.MAX_VALUE, 1));
 
-        // Título
         JLabel lblTitulo = new JLabel("Jogo Educativo de Química");
         lblTitulo.setFont(new Font("Segoe UI", Font.BOLD, 15));
         JPanel painelTitulo = centralizar(lblTitulo);
 
-        // Campo: E-mail institucional
         JLabel lblCodigo = rotuloCampo("E-MAIL INSTITUCIONAL");
         campoCodigo = new JTextField();
         campoCodigo.setToolTipText("ex: 26085@aluno.cps.sp.gov.br");
         estilizarCampo(campoCodigo);
 
-        // Campo: Senha
         JLabel lblSenha = rotuloCampo("SENHA");
         campoSenha = new JPasswordField();
         estilizarCampo(campoSenha);
 
-        // Botão Entrar
         JButton btnEntrar = new JButton("ENTRAR");
         btnEntrar.setFont(new Font("Segoe UI", Font.BOLD, 16));
         btnEntrar.setBackground(JanelaJogo.COR_VERMELHO);
@@ -91,13 +76,11 @@ public class TelaLogin extends JPanel {
         campoCodigo.addActionListener(e -> tentarLogin());
         campoSenha.addActionListener(e -> tentarLogin());
 
-        // Label de erro
         labelErro = new JLabel(" ");
         labelErro.setFont(new Font("Segoe UI", Font.PLAIN, 12));
         labelErro.setForeground(JanelaJogo.COR_VERMELHO);
         JPanel painelErro = centralizar(labelErro);
 
-        // Link para cadastro
         JButton btnCadastro = new JButton("Não tem conta? Cadastre-se");
         btnCadastro.setFont(new Font("Segoe UI", Font.PLAIN, 12));
         btnCadastro.setForeground(JanelaJogo.COR_AZUL);
@@ -108,7 +91,6 @@ public class TelaLogin extends JPanel {
         btnCadastro.addActionListener(e -> jogo.mostrarTela(JanelaJogo.TELA_CADASTRO));
         JPanel painelCadastro = centralizar(btnCadastro);
 
-        // Montagem
         card.add(painelLogo);
         card.add(Box.createVerticalStrut(6));
         card.add(painelEscola);
@@ -134,10 +116,6 @@ public class TelaLogin extends JPanel {
         add(card);
     }
 
-    /**
-     * Busca o usuário no banco pelo código e senha.
-     * Se encontrado, inicia a sessão e redireciona para o menu correto.
-     */
     private void tentarLogin() {
         String email = campoCodigo.getText().trim().toLowerCase();
         String senha = new String(campoSenha.getPassword());
@@ -158,7 +136,6 @@ public class TelaLogin extends JPanel {
 
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    // Login bem-sucedido — inicia a sessão
                     SessaoUsuario.getInstancia().iniciarSessao(
                         rs.getInt("id_usuario"),
                         rs.getString("codigo_num_individual"),
@@ -171,7 +148,6 @@ public class TelaLogin extends JPanel {
                     campoCodigo.setText("");
                     campoSenha.setText("");
 
-                    // Cria o objeto Usuario legado para compatibilidade com JanelaJogo
                     SessaoUsuario s = SessaoUsuario.getInstancia();
                     Usuario u = new Usuario(s.getNome(), s.getEmail(), "", s.isProfessor());
                     jogo.fazerLogin(u);
@@ -182,12 +158,10 @@ public class TelaLogin extends JPanel {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace(); // imprime o erro completo no terminal do VS Code
+            e.printStackTrace();
             labelErro.setText("Erro de conexão com o banco de dados.");
         }
     }
-
-    // ---- helpers de layout ----
 
     private JPanel centralizar(JComponent comp) {
         JPanel w = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
