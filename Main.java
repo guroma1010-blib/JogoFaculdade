@@ -36,7 +36,7 @@ public class Main {
             @Override
             public void run() {
                 try {
-                    new JanelaJogo();
+                    new JanelaJogo().setVisible(true);
                 } catch (Exception ex) {
                     System.err.println("======================================================");
                     System.err.println("EXCEÇÃO NA INTERFACE GRÁFICA (AWT EventQueue):");

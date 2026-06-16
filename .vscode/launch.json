@@ -3,6 +3,34 @@
     "configurations": [
         {
             "type": "java",
+            "name": "JanelaJogo",
+            "request": "launch",
+            "mainClass": "JanelaJogo",
+            "projectName": "JogoFaculdade_724a6f8b"
+        },
+        {
+            "type": "java",
+            "name": "TelaLogin",
+            "request": "launch",
+            "mainClass": "TelaLogin",
+            "projectName": "JogoFaculdade_724a6f8b"
+        },
+        {
+            "type": "java",
+            "name": "DatabaseConnection",
+            "request": "launch",
+            "mainClass": "DatabaseConnection",
+            "projectName": "JogoFaculdade_724a6f8b"
+        },
+        {
+            "type": "java",
+            "name": "Main",
+            "request": "launch",
+            "mainClass": "Main",
+            "projectName": "JogoFaculdade_724a6f8b"
+        },
+        {
+            "type": "java",
             "name": "Main",
             "request": "launch",
             "mainClass": "Main",

@@ -8,11 +8,11 @@ public class TelaPergunta extends JPanel {
     private JanelaJogo jogo;
     private Cabecalho  cabecalho;
 
-    private Quiz          quizAtual;
-    private int           indicePerguntaAtual;
-    private int           acertos;
-    private int           pontosTotais;
-    private boolean       dicaUsada;
+    private Quiz    quizAtual;
+    private int     indicePerguntaAtual;
+    private int     acertos;
+    private int     pontosTotais;
+    private boolean dicaUsada;
 
     private JLabel    lblContador;
     private JLabel    lblDificuldade;
@@ -27,13 +27,10 @@ public class TelaPergunta extends JPanel {
 
     public TelaPergunta(JanelaJogo jogo) {
         this.jogo = jogo;
-
         setBackground(JanelaJogo.COR_FUNDO);
         setLayout(new BorderLayout());
-
         cabecalho = new Cabecalho(jogo, JanelaJogo.TELA_MENU_ALUNO);
         add(cabecalho, BorderLayout.NORTH);
-
         add(construirAreaPerguntas(), BorderLayout.CENTER);
     }
 
@@ -110,8 +107,8 @@ public class TelaPergunta extends JPanel {
                 }
             });
 
-            celula.add(botoesMarcacao[i],  BorderLayout.CENTER);
-            celula.add(labelsMarcacao[i],  BorderLayout.SOUTH);
+            celula.add(botoesMarcacao[i], BorderLayout.CENTER);
+            celula.add(labelsMarcacao[i], BorderLayout.SOUTH);
             gradeAlternativas.add(celula);
         }
 
@@ -156,19 +153,18 @@ public class TelaPergunta extends JPanel {
             }
         });
 
-        painel.add(linhaTopo);
-        painel.add(Box.createVerticalStrut(14));
-        painel.add(cardEnunciado);
-        painel.add(Box.createVerticalStrut(20));
-        painel.add(gradeAlternativas);
-        painel.add(Box.createVerticalStrut(16));
-
         JPanel linhaRodape = new JPanel(new FlowLayout(FlowLayout.LEFT, 12, 0));
         linhaRodape.setOpaque(false);
         linhaRodape.setAlignmentX(Component.LEFT_ALIGNMENT);
         linhaRodape.add(btnDica);
         linhaRodape.add(btnAvancar);
 
+        painel.add(linhaTopo);
+        painel.add(Box.createVerticalStrut(14));
+        painel.add(cardEnunciado);
+        painel.add(Box.createVerticalStrut(20));
+        painel.add(gradeAlternativas);
+        painel.add(Box.createVerticalStrut(16));
         painel.add(linhaRodape);
         painel.add(Box.createVerticalStrut(10));
         painel.add(lblDicaTexto);
@@ -183,7 +179,6 @@ public class TelaPergunta extends JPanel {
         this.indicePerguntaAtual = 0;
         this.acertos             = 0;
         this.pontosTotais        = 0;
-
         cabecalho.atualizar();
         mostrarPergunta(0);
     }
@@ -202,9 +197,9 @@ public class TelaPergunta extends JPanel {
 
         if (p.temImagem()) {
             try {
-                ImageIcon original = new ImageIcon(p.getCaminhoImagem());
-                Image escalonada   = original.getImage()
-                                             .getScaledInstance(220, 160, Image.SCALE_SMOOTH);
+                ImageIcon original  = new ImageIcon(p.getCaminhoImagem());
+                Image     escalonada = original.getImage()
+                                               .getScaledInstance(220, 160, Image.SCALE_SMOOTH);
                 lblImagem.setIcon(new ImageIcon(escalonada));
                 lblImagem.setVisible(true);
             } catch (Exception ex) {
@@ -225,6 +220,7 @@ public class TelaPergunta extends JPanel {
 
         lblFeedback.setText(" ");
         lblDicaTexto.setText(" ");
+        btnDica.setEnabled(true);
         btnDica.setVisible(p.getDica() != null && !p.getDica().isEmpty());
         btnAvancar.setVisible(false);
 
@@ -296,6 +292,7 @@ public class TelaPergunta extends JPanel {
         String dica = quizAtual.getPerguntas().get(indicePerguntaAtual).getDica();
         lblDicaTexto.setText("Dica: " + dica);
         revalidate();
+        repaint();
     }
 
     private void estilizarBotaoAlternativa(JButton btn) {
@@ -314,8 +311,8 @@ public class TelaPergunta extends JPanel {
     private void atualizarCorBadge() {
         Color cor;
         switch (quizAtual.getDificuldade()) {
-            case FACIL:   cor = JanelaJogo.COR_VERDE;    break;
-            case MEDIO:   cor = JanelaJogo.COR_LARANJA;  break;
+            case FACIL:   cor = JanelaJogo.COR_VERDE;   break;
+            case MEDIO:   cor = JanelaJogo.COR_LARANJA; break;
             case DIFICIL: cor = JanelaJogo.COR_VERMELHO; break;
             default:      cor = JanelaJogo.COR_TEXTO_CINZA;
         }

@@ -4,7 +4,6 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.*;
 import java.sql.*;
-import java.util.List;
 
 public class TelaDesempenhoGeral extends JPanel {
 
@@ -86,36 +85,37 @@ public class TelaDesempenhoGeral extends JPanel {
         Usuario u = jogo.getUsuarioLogado();
         String nomeLogado = (u != null && !u.isProfessor()) ? u.getNome() : null;
 
+        String sql =
+            "SELECT u.nome, " +
+            "       COUNT(r.id_resultado)              AS quizzes_feitos, " +
+            "       COALESCE(SUM(r.acertos), 0)        AS total_acertos, " +
+            "       COALESCE(SUM(r.total_perguntas), 0) AS total_perg, " +
+            "       COALESCE(SUM(r.pontos), 0)         AS pontos " +
+            "FROM usuarios u " +
+            "LEFT JOIN resultado_quizzes r ON u.id_usuario = r.id_usuario " +
+            "WHERE UPPER(u.tipo_usuario) = 'ALUNO' " +
+            "GROUP BY u.id_usuario, u.nome " +
+            "ORDER BY pontos DESC, u.nome ASC";
+
         try (Connection con = DatabaseConnection.getConexao();
-             PreparedStatement ps = con.prepareStatement(
-                 "SELECT nome FROM usuarios WHERE UPPER(tipo_usuario) = 'ALUNO' ORDER BY nome");
+             PreparedStatement ps = con.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
-                String nome = rs.getString("nome");
-                boolean eLogadoComHistorico = nome.equals(nomeLogado)
-                        && u != null && !u.getHistorico().isEmpty();
-                if (!eLogadoComHistorico) {
-                    adicionarLinha(nome, 0, 0, "—", 0);
-                }
+                String nome   = rs.getString("nome");
+                int quizzes   = rs.getInt("quizzes_feitos");
+                int acertos   = rs.getInt("total_acertos");
+                long totalPerg = rs.getLong("total_perg");
+                int pontos    = rs.getInt("pontos");
+                String pct    = totalPerg > 0
+                    ? Math.round(100.0 * acertos / totalPerg) + "%" : "—";
+
+                String nomeExib = nome.equals(nomeLogado) ? nome + " (você)" : nome;
+                adicionarLinha(nomeExib, quizzes, acertos, pct, pontos);
             }
 
         } catch (SQLException e) {
             e.printStackTrace();
-        }
-
-        if (u != null && !u.isProfessor() && !u.getHistorico().isEmpty()) {
-            List<ResultadoQuiz> hist = u.getHistorico();
-            int totalAcertos   = 0;
-            int totalPerguntas = 0;
-            for (ResultadoQuiz r : hist) {
-                totalAcertos   += r.getAcertos();
-                totalPerguntas += r.getTotalPerguntas();
-            }
-            String pct = totalPerguntas > 0
-                ? Math.round(100.0 * totalAcertos / totalPerguntas) + "%"
-                : "—";
-            adicionarLinha(u.getNome() + " (você)", hist.size(), totalAcertos, pct, u.getPontos());
         }
     }
 

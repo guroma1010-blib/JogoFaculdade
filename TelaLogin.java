@@ -5,7 +5,7 @@ import java.sql.*;
 public class TelaLogin extends JPanel {
 
     private JanelaJogo     jogo;
-    private JTextField     campoCodigo;
+    private JTextField     campoEmail;
     private JPasswordField campoSenha;
     private JLabel         labelErro;
 
@@ -54,9 +54,9 @@ public class TelaLogin extends JPanel {
         JPanel painelTitulo = centralizar(lblTitulo);
 
         JLabel lblCodigo = rotuloCampo("E-MAIL INSTITUCIONAL");
-        campoCodigo = new JTextField();
-        campoCodigo.setToolTipText("ex: 26085@aluno.cps.sp.gov.br");
-        estilizarCampo(campoCodigo);
+        campoEmail = new JTextField();
+        campoEmail.setToolTipText("ex: 26085@aluno.cps.sp.gov.br");
+        estilizarCampo(campoEmail);
 
         JLabel lblSenha = rotuloCampo("SENHA");
         campoSenha = new JPasswordField();
@@ -72,8 +72,9 @@ public class TelaLogin extends JPanel {
         btnEntrar.setMaximumSize(new Dimension(Integer.MAX_VALUE, 50));
         btnEntrar.setPreferredSize(new Dimension(200, 50));
         btnEntrar.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        
         btnEntrar.addActionListener(e -> tentarLogin());
-        campoCodigo.addActionListener(e -> tentarLogin());
+        campoEmail.addActionListener(e -> tentarLogin());
         campoSenha.addActionListener(e -> tentarLogin());
 
         labelErro = new JLabel(" ");
@@ -88,7 +89,11 @@ public class TelaLogin extends JPanel {
         btnCadastro.setBorderPainted(false);
         btnCadastro.setFocusPainted(false);
         btnCadastro.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        btnCadastro.addActionListener(e -> jogo.mostrarTela(JanelaJogo.TELA_CADASTRO));
+        btnCadastro.addActionListener(e -> {
+            if (jogo != null) {
+                jogo.mostrarTela(JanelaJogo.TELA_CADASTRO);
+            }
+        });
         JPanel painelCadastro = centralizar(btnCadastro);
 
         card.add(painelLogo);
@@ -101,7 +106,7 @@ public class TelaLogin extends JPanel {
         card.add(Box.createVerticalStrut(28));
         card.add(lblCodigo);
         card.add(Box.createVerticalStrut(5));
-        card.add(campoCodigo);
+        card.add(campoEmail);
         card.add(Box.createVerticalStrut(16));
         card.add(lblSenha);
         card.add(Box.createVerticalStrut(5));
@@ -117,7 +122,7 @@ public class TelaLogin extends JPanel {
     }
 
     private void tentarLogin() {
-        String email = campoCodigo.getText().trim().toLowerCase();
+        String email = campoEmail.getText().trim().toLowerCase();
         String senha = new String(campoSenha.getPassword());
 
         if (email.isEmpty() || senha.isEmpty()) {
@@ -145,12 +150,17 @@ public class TelaLogin extends JPanel {
                     );
 
                     labelErro.setText(" ");
-                    campoCodigo.setText("");
+                    campoEmail.setText("");
                     campoSenha.setText("");
 
                     SessaoUsuario s = SessaoUsuario.getInstancia();
                     Usuario u = new Usuario(s.getNome(), s.getEmail(), "", s.isProfessor());
-                    jogo.fazerLogin(u);
+                    
+                    if (jogo != null) {
+                        jogo.fazerLogin(u);
+                    } else {
+                        JOptionPane.showMessageDialog(this, "Login efetuado com sucesso no banco! (Modo Teste)");
+                    }
 
                 } else {
                     labelErro.setText("E-mail ou senha incorretos.");
@@ -188,5 +198,23 @@ public class TelaLogin extends JPanel {
             BorderFactory.createLineBorder(new Color(200, 200, 200), 1),
             BorderFactory.createEmptyBorder(8, 12, 8, 12)
         ));
+    }
+
+    // MÉTODO MAIN ADICIONADO PARA PERMITIR EXECUTAR A TELA DIRETO
+    public static void main(String[] args) {
+        // Inicializa algumas constantes simuladas caso a JanelaJogo ainda não tenha rodado
+        // Isso evita erros caso seu design dependa de cores estáticas
+        SwingUtilities.invokeLater(() -> {
+            JFrame frame = new JFrame("QuimQuest - Teste de Tela");
+            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            frame.setSize(600, 650);
+            frame.setLocationRelativeTo(null);
+            
+            // Passa null para o construtor só para testar a interface isolada
+            TelaLogin tela = new TelaLogin(null); 
+            frame.add(tela);
+            
+            frame.setVisible(true);
+        });
     }
 }

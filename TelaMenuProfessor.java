@@ -62,12 +62,17 @@ public class TelaMenuProfessor extends JPanel {
     }
 
     private JPanel construirCardsDeAcao() {
-        JPanel linha = new JPanel(new GridLayout(1, 4, 16, 0));
-        linha.setOpaque(false);
-        linha.setAlignmentX(Component.LEFT_ALIGNMENT);
-        linha.setMaximumSize(new Dimension(Integer.MAX_VALUE, 130));
+        JPanel painel = new JPanel();
+        painel.setOpaque(false);
+        painel.setLayout(new BoxLayout(painel, BoxLayout.Y_AXIS));
+        painel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        linha.add(criarCard("CRIAR QUIZ", "Montar quiz completo",
+        JPanel linha1 = new JPanel(new GridLayout(1, 3, 16, 0));
+        linha1.setOpaque(false);
+        linha1.setAlignmentX(Component.LEFT_ALIGNMENT);
+        linha1.setMaximumSize(new Dimension(Integer.MAX_VALUE, 120));
+
+        linha1.add(criarCard("CRIAR QUIZ", "Montar quiz completo",
             JanelaJogo.COR_VERMELHO,
             new ActionListener() {
                 @Override
@@ -77,7 +82,7 @@ public class TelaMenuProfessor extends JPanel {
             }
         ));
 
-        linha.add(criarCard("QUIZES PRONTOS", "Gerenciar questões",
+        linha1.add(criarCard("QUIZES PRONTOS", "Gerenciar questões",
             new Color(200, 100, 0),
             new ActionListener() {
                 @Override
@@ -87,7 +92,7 @@ public class TelaMenuProfessor extends JPanel {
             }
         ));
 
-        linha.add(criarCard("MATÉRIA", "Ver conteúdo",
+        linha1.add(criarCard("MATÉRIA", "Ver conteúdo",
             JanelaJogo.COR_ROXO,
             new ActionListener() {
                 @Override
@@ -97,7 +102,12 @@ public class TelaMenuProfessor extends JPanel {
             }
         ));
 
-        linha.add(criarCard("DESEMPENHO", "Ver alunos",
+        JPanel linha2 = new JPanel(new GridLayout(1, 2, 16, 0));
+        linha2.setOpaque(false);
+        linha2.setAlignmentX(Component.LEFT_ALIGNMENT);
+        linha2.setMaximumSize(new Dimension(Integer.MAX_VALUE, 120));
+
+        linha2.add(criarCard("DESEMPENHO", "Ver alunos",
             JanelaJogo.COR_VERDE,
             new ActionListener() {
                 @Override
@@ -107,7 +117,21 @@ public class TelaMenuProfessor extends JPanel {
             }
         ));
 
-        return linha;
+        linha2.add(criarCard("EDITAR MATÉRIA", "Editar materiais do lab",
+            JanelaJogo.COR_AZUL,
+            new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    jogo.abrirEditarMaterial();
+                }
+            }
+        ));
+
+        painel.add(linha1);
+        painel.add(Box.createVerticalStrut(12));
+        painel.add(linha2);
+
+        return painel;
     }
 
     private JPanel criarCard(String titulo, String subtitulo,
