@@ -15,8 +15,8 @@ public class TelaCriarQuiz extends JPanel {
     private JTextField         campoNomeQuiz;
     private JComboBox<String>  comboDificuldade;
     private JComboBox<Integer> comboNumQuestoes;
-
-    private JPanel painelQuestoes;
+    private JPanel             painelQuestoes;
+    private JLabel             lblAviso;
 
     private List<JTextField>        camposEnunciado  = new ArrayList<>();
     private List<JTextField[]>      camposOpcoes     = new ArrayList<>();
@@ -24,8 +24,6 @@ public class TelaCriarQuiz extends JPanel {
     private List<JTextField>        camposDica       = new ArrayList<>();
     private List<String>            caminhosImagem   = new ArrayList<>();
     private List<JLabel>            lblPreviewImagem = new ArrayList<>();
-
-    private JLabel lblAviso;
 
     public TelaCriarQuiz(JanelaJogo jogo) {
         this.jogo = jogo;
@@ -74,7 +72,7 @@ public class TelaCriarQuiz extends JPanel {
         colNome.add(rotulo("NOME DO QUIZ"));
         colNome.add(Box.createVerticalStrut(4));
         campoNomeQuiz = campo();
-        campoNomeQuiz.setToolTipText("Ex: Quiz de Vidrarias...");
+        campoNomeQuiz.setToolTipText("Ex: Quiz de Vidrarias");
         colNome.add(campoNomeQuiz);
 
         JPanel colDif = coluna();
@@ -104,7 +102,7 @@ public class TelaCriarQuiz extends JPanel {
         faixaConfig.add(colNum);
 
         lblAviso = new JLabel(" ");
-        lblAviso.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+        lblAviso.setFont(new Font("Segoe UI", Font.BOLD, 13));
         lblAviso.setForeground(JanelaJogo.COR_VERMELHO);
         lblAviso.setAlignmentX(Component.LEFT_ALIGNMENT);
 
@@ -114,14 +112,14 @@ public class TelaCriarQuiz extends JPanel {
         painelQuestoes.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         JButton btnSalvar = new JButton("Salvar Quiz");
-        btnSalvar.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        btnSalvar.setFont(new Font("Segoe UI", Font.BOLD, 15));
         btnSalvar.setBackground(JanelaJogo.COR_VERMELHO);
         btnSalvar.setForeground(Color.WHITE);
         btnSalvar.setBorderPainted(false);
         btnSalvar.setFocusPainted(false);
         btnSalvar.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         btnSalvar.setAlignmentX(Component.LEFT_ALIGNMENT);
-        btnSalvar.setBorder(BorderFactory.createEmptyBorder(12, 32, 12, 32));
+        btnSalvar.setMaximumSize(new Dimension(Integer.MAX_VALUE, 50));
         btnSalvar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) { salvarQuiz(); }
@@ -132,12 +130,12 @@ public class TelaCriarQuiz extends JPanel {
         corpo.add(linhaTitulo);
         corpo.add(Box.createVerticalStrut(20));
         corpo.add(faixaConfig);
-        corpo.add(Box.createVerticalStrut(8));
-        corpo.add(lblAviso);
-        corpo.add(Box.createVerticalStrut(8));
+        corpo.add(Box.createVerticalStrut(16));
         corpo.add(painelQuestoes);
         corpo.add(Box.createVerticalStrut(20));
         corpo.add(btnSalvar);
+        corpo.add(Box.createVerticalStrut(10));
+        corpo.add(lblAviso);
 
         reconstruirQuestoes();
         return new JScrollPane(corpo);
@@ -189,7 +187,7 @@ public class TelaCriarQuiz extends JPanel {
         lblPreview.setAlignmentX(Component.LEFT_ALIGNMENT);
         lblPreviewImagem.add(lblPreview);
 
-        JButton btnImagem = new JButton("📎  Adicionar Imagem");
+        JButton btnImagem = new JButton("Adicionar Imagem (opcional)");
         btnImagem.setFont(new Font("Segoe UI", Font.PLAIN, 12));
         btnImagem.setBackground(new Color(245, 245, 245));
         btnImagem.setForeground(JanelaJogo.COR_TEXTO_ESCURO);
@@ -205,7 +203,7 @@ public class TelaCriarQuiz extends JPanel {
             public void actionPerformed(ActionEvent e) { selecionarImagem(indice); }
         });
 
-        JButton btnRemover = new JButton("✕ Remover");
+        JButton btnRemover = new JButton("Remover imagem");
         btnRemover.setFont(new Font("Segoe UI", Font.PLAIN, 11));
         btnRemover.setBackground(Color.WHITE);
         btnRemover.setForeground(JanelaJogo.COR_VERMELHO);
@@ -254,20 +252,17 @@ public class TelaCriarQuiz extends JPanel {
             lblLetra.setPreferredSize(new Dimension(30, 40));
             lblLetra.setMaximumSize(new Dimension(30, 40));
 
-            JPanel linhaAlternativa = new JPanel();
-            linhaAlternativa.setOpaque(false);
-            linhaAlternativa.setLayout(new BoxLayout(linhaAlternativa, BoxLayout.X_AXIS));
-            linhaAlternativa.setAlignmentX(Component.LEFT_ALIGNMENT);
-            linhaAlternativa.setMaximumSize(new Dimension(Integer.MAX_VALUE, 44));
+            JPanel linhaAlt = new JPanel();
+            linhaAlt.setOpaque(false);
+            linhaAlt.setLayout(new BoxLayout(linhaAlt, BoxLayout.X_AXIS));
+            linhaAlt.setAlignmentX(Component.LEFT_ALIGNMENT);
+            linhaAlt.setMaximumSize(new Dimension(Integer.MAX_VALUE, 44));
+            linhaAlt.add(lblLetra);
+            linhaAlt.add(Box.createHorizontalStrut(8));
+            linhaAlt.add(opcoes[j]);
 
-            linhaAlternativa.add(lblLetra);
-            linhaAlternativa.add(Box.createHorizontalStrut(8));
-            linhaAlternativa.add(opcoes[j]);
-
-            painelAlternativas.add(linhaAlternativa);
-            if (j < 3) {
-                painelAlternativas.add(Box.createVerticalStrut(8));
-            }
+            painelAlternativas.add(linhaAlt);
+            if (j < 3) painelAlternativas.add(Box.createVerticalStrut(8));
         }
         camposOpcoes.add(opcoes);
 
@@ -279,7 +274,7 @@ public class TelaCriarQuiz extends JPanel {
 
         JTextField campoDica = campo();
         campoDica.setMaximumSize(new Dimension(Integer.MAX_VALUE, 44));
-        campoDica.setToolTipText("Dica exibida ao aluno ao custo de -5 pts");
+        campoDica.setToolTipText("Dica exibida ao aluno ao custo de -5 pts (opcional)");
         camposDica.add(campoDica);
 
         card.add(lblNumero);
@@ -288,7 +283,7 @@ public class TelaCriarQuiz extends JPanel {
         card.add(Box.createVerticalStrut(4));
         card.add(campoEnunc);
         card.add(Box.createVerticalStrut(14));
-        card.add(rotulo("IMAGEM DA PERGUNTA (opcional)"));
+        card.add(rotulo("IMAGEM (opcional)"));
         card.add(Box.createVerticalStrut(6));
         card.add(linhaImagem);
         card.add(Box.createVerticalStrut(4));
@@ -312,15 +307,13 @@ public class TelaCriarQuiz extends JPanel {
     private void selecionarImagem(final int indice) {
         JFileChooser chooser = new JFileChooser();
         chooser.setDialogTitle("Selecionar imagem para a Questão " + (indice + 1));
-        FileNameExtensionFilter filtro = new FileNameExtensionFilter(
+        chooser.setFileFilter(new FileNameExtensionFilter(
             "Imagens (JPG, PNG, GIF, BMP)", "jpg", "jpeg", "png", "gif", "bmp"
-        );
-        chooser.setFileFilter(filtro);
+        ));
         chooser.setAcceptAllFileFilterUsed(false);
         chooser.setCurrentDirectory(new File(System.getProperty("user.dir")));
 
-        int resultado = chooser.showOpenDialog(jogo);
-        if (resultado == JFileChooser.APPROVE_OPTION) {
+        if (chooser.showOpenDialog(jogo) == JFileChooser.APPROVE_OPTION) {
             File arquivo = chooser.getSelectedFile();
             caminhosImagem.set(indice, arquivo.getAbsolutePath());
             lblPreviewImagem.get(indice).setText("✔ " + arquivo.getName());
@@ -329,10 +322,11 @@ public class TelaCriarQuiz extends JPanel {
     }
 
     private void salvarQuiz() {
+        lblAviso.setText(" ");
         String nomeQuiz = campoNomeQuiz.getText().trim();
 
         if (nomeQuiz.isEmpty()) {
-            lblAviso.setText("⚠ Preencha o nome do quiz.");
+            mostrarErroValidacao("Preencha o nome do quiz antes de salvar.");
             return;
         }
 
@@ -340,13 +334,13 @@ public class TelaCriarQuiz extends JPanel {
 
         for (int i = 0; i < n; i++) {
             if (camposEnunciado.get(i).getText().trim().isEmpty()) {
-                lblAviso.setText("⚠ Preencha o enunciado da questão " + (i + 1) + ".");
+                mostrarErroValidacao("Preencha o enunciado da questão " + (i + 1) + ".");
                 return;
             }
             JTextField[] ops = camposOpcoes.get(i);
             for (int j = 0; j < 4; j++) {
                 if (ops[j].getText().trim().isEmpty()) {
-                    lblAviso.setText("⚠ Preencha todas as alternativas da questão " + (i + 1) + ".");
+                    mostrarErroValidacao("Preencha todas as alternativas da questão " + (i + 1) + ".");
                     return;
                 }
             }
@@ -359,7 +353,7 @@ public class TelaCriarQuiz extends JPanel {
             default: dif = Quiz.Dificuldade.FACIL;
         }
 
-        String criadoPor = jogo.getUsuarioLogado() != null
+        String criadoPor = (jogo.getUsuarioLogado() != null)
             ? jogo.getUsuarioLogado().getNome() : "Professor";
 
         Quiz novoQuiz = new Quiz(nomeQuiz, dif, criadoPor);
@@ -371,31 +365,30 @@ public class TelaCriarQuiz extends JPanel {
             for (int j = 0; j < letras.length; j++) {
                 if (letras[j].equals(opcaoCorreta)) { indiceCorreto = j; break; }
             }
+
             JTextField[] ops = camposOpcoes.get(i);
-            String[] opcoesTexto = {
-                ops[0].getText().trim(), ops[1].getText().trim(),
-                ops[2].getText().trim(), ops[3].getText().trim()
+            String[] textos = {
+                ops[0].getText().trim(),
+                ops[1].getText().trim(),
+                ops[2].getText().trim(),
+                ops[3].getText().trim()
             };
+
             novoQuiz.adicionarPergunta(new Pergunta(
                 camposEnunciado.get(i).getText().trim(),
-                opcoesTexto,
+                textos,
                 indiceCorreto,
                 camposDica.get(i).getText().trim(),
                 caminhosImagem.get(i)
             ));
         }
 
-        if (!salvarNoBanco(novoQuiz)) {
-            return;
-        }
+        if (!salvarNoBanco(novoQuiz)) return;
 
         jogo.getQuizzesDoDomain().add(novoQuiz);
-        lblAviso.setText(" ");
-
         JOptionPane.showMessageDialog(jogo,
             "Quiz \"" + nomeQuiz + "\" salvo com sucesso!\nOs alunos já podem jogar.",
             "Quiz Salvo", JOptionPane.INFORMATION_MESSAGE);
-
         jogo.mostrarTela(JanelaJogo.TELA_MENU_PROFESSOR);
     }
 
@@ -405,7 +398,8 @@ public class TelaCriarQuiz extends JPanel {
             "VALUES (?, ?, ?, ?)";
         String sqlPergunta =
             "INSERT INTO perguntas " +
-            "(id_quiz, enunciado, opcao_a, opcao_b, opcao_c, opcao_d, indice_correto, dica, caminho_imagem) " +
+            "(id_quiz, enunciado, opcao_a, opcao_b, opcao_c, opcao_d, " +
+            "indice_correto, dica, caminho_imagem) " +
             "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         Connection con = null;
@@ -414,7 +408,9 @@ public class TelaCriarQuiz extends JPanel {
             con.setAutoCommit(false);
 
             int idQuiz;
-            try (PreparedStatement psQuiz = con.prepareStatement(sqlQuiz, Statement.RETURN_GENERATED_KEYS)) {
+            try (PreparedStatement psQuiz = con.prepareStatement(
+                    sqlQuiz, Statement.RETURN_GENERATED_KEYS)) {
+
                 psQuiz.setString(1, quiz.getNome());
                 psQuiz.setString(2, quiz.getDificuldade().name());
                 psQuiz.setString(3, quiz.getCriadoPor());
@@ -422,14 +418,14 @@ public class TelaCriarQuiz extends JPanel {
                 psQuiz.executeUpdate();
 
                 try (ResultSet keys = psQuiz.getGeneratedKeys()) {
-                    keys.next();
+                    if (!keys.next()) throw new SQLException("Nenhuma chave gerada para o quiz.");
                     idQuiz = keys.getInt(1);
                 }
             }
 
             try (PreparedStatement psPerg = con.prepareStatement(sqlPergunta)) {
                 for (Pergunta p : quiz.getPerguntas()) {
-                    String[] ops  = p.getOpcoes();
+                    String[] ops = p.getOpcoes();
                     String   dica = p.getDica();
                     String   img  = p.getCaminhoImagem();
 
@@ -462,11 +458,13 @@ public class TelaCriarQuiz extends JPanel {
             return true;
 
         } catch (SQLException e) {
-            e.printStackTrace();
             if (con != null) {
                 try { con.rollback(); } catch (SQLException ex) { ex.printStackTrace(); }
             }
-            lblAviso.setText("⚠ Erro ao salvar no banco: " + e.getMessage());
+            JOptionPane.showMessageDialog(jogo,
+                "Erro ao salvar quiz no banco de dados:\n\n" + e.getMessage() +
+                "\n\nVerifique se as tabelas 'quizzes' e 'perguntas' existem no MySQL.",
+                "Erro de Banco de Dados", JOptionPane.ERROR_MESSAGE);
             return false;
 
         } finally {
@@ -474,6 +472,11 @@ public class TelaCriarQuiz extends JPanel {
                 try { con.close(); } catch (SQLException ex) { ex.printStackTrace(); }
             }
         }
+    }
+
+    private void mostrarErroValidacao(String mensagem) {
+        lblAviso.setText("⚠  " + mensagem);
+        JOptionPane.showMessageDialog(jogo, mensagem, "Campo Obrigatório", JOptionPane.WARNING_MESSAGE);
     }
 
     private JLabel rotulo(String texto) {
