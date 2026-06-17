@@ -20,6 +20,7 @@ public class Quiz {
         public int getPontosPorAcerto() { return pontosPorAcerto; }
     }
 
+    private int               id = 0;
     private String            nome;
     private Dificuldade       dificuldade;
     private List<Pergunta>    perguntas;
@@ -36,6 +37,8 @@ public class Quiz {
         perguntas.add(p);
     }
 
+    public int             getId()               { return id; }
+    public void            setId(int id)         { this.id = id; }
     public String          getNome()             { return nome; }
     public Dificuldade     getDificuldade()       { return dificuldade; }
     public List<Pergunta>  getPerguntas()         { return perguntas; }
