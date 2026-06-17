@@ -1,6 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -198,6 +199,19 @@ public class TelaQuizesProntos extends JPanel {
             btnEditar.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
             btnEditar.addActionListener(e -> abrirDialogoEdicao(quiz));
             direita.add(btnEditar);
+
+            JButton btnExcluir = new JButton("Excluir Quiz");
+            btnExcluir.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+            btnExcluir.setForeground(JanelaJogo.COR_VERMELHO);
+            btnExcluir.setBackground(Color.WHITE);
+            btnExcluir.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(JanelaJogo.COR_VERMELHO, 1, true),
+                BorderFactory.createEmptyBorder(4, 10, 4, 10)
+            ));
+            btnExcluir.setFocusPainted(false);
+            btnExcluir.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+            btnExcluir.addActionListener(e -> excluirQuiz(quiz));
+            direita.add(btnExcluir);
         }
 
         header.add(esquerda, BorderLayout.WEST);
@@ -341,6 +355,41 @@ public class TelaQuizesProntos extends JPanel {
         dialog.add(new JScrollPane(corpo), BorderLayout.CENTER);
         dialog.add(rodape, BorderLayout.SOUTH);
         dialog.setVisible(true);
+    }
+
+    private void excluirQuiz(Quiz quiz) {
+        if (quiz.getId() == 0) {
+            JOptionPane.showMessageDialog(jogo,
+                "Este quiz é de demonstração e não pode ser excluído.",
+                "Operação não permitida",
+                JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        int confirmacao = JOptionPane.showConfirmDialog(jogo,
+            "Tem certeza que deseja excluir o quiz \"" + quiz.getNome() + "\"?\n"
+            + "Todas as perguntas vinculadas também serão removidas.",
+            "Confirmar exclusão",
+            JOptionPane.YES_NO_OPTION,
+            JOptionPane.WARNING_MESSAGE);
+
+        if (confirmacao != JOptionPane.YES_OPTION) return;
+
+        try (Connection con = DatabaseConnection.getConexao();
+             PreparedStatement ps = con.prepareStatement(
+                 "DELETE FROM quizzes WHERE id_quiz = ?")) {
+            ps.setInt(1, quiz.getId());
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(jogo,
+                "Erro ao excluir quiz: " + e.getMessage(),
+                "Erro no banco de dados",
+                JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        jogo.getQuizzesDoDomain().remove(quiz);
+        atualizarLista();
     }
 
     private JButton criarBotaoVoltar() {

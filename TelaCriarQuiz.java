@@ -420,6 +420,7 @@ public class TelaCriarQuiz extends JPanel {
                 try (ResultSet keys = psQuiz.getGeneratedKeys()) {
                     if (!keys.next()) throw new SQLException("Nenhuma chave gerada para o quiz.");
                     idQuiz = keys.getInt(1);
+                    quiz.setId(idQuiz);
                 }
             }
 

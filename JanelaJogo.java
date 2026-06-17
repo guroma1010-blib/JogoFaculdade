@@ -27,7 +27,6 @@ public class JanelaJogo extends JFrame {
     public static final String TELA_MATERIA          = "MATERIA";
     public static final String TELA_CRIAR_QUIZ       = "CRIAR_QUIZ";
     public static final String TELA_QUIZES_PRONTOS   = "QUIZES_PRONTOS";
-    public static final String TELA_EDITAR_MATERIAL  = "EDITAR_MATERIAL";
 
     private CardLayout cardLayout;
     private JPanel     painelTelas;
@@ -42,7 +41,6 @@ public class JanelaJogo extends JFrame {
     private TelaDesempenho      telaDesempenho;
     private TelaDesempenhoGeral telaDesempenhoGeral;
     private TelaQuizesProntos   telaQuizesProntos;
-    private TelaEditarMaterial  telaEditarMaterial;
 
     public JanelaJogo() {
         setTitle("QuimQuest - Etec Júlio de Mesquita");
@@ -69,8 +67,6 @@ public class JanelaJogo extends JFrame {
         telaDesempenho      = new TelaDesempenho(this);
         telaDesempenhoGeral = new TelaDesempenhoGeral(this);
         telaQuizesProntos   = new TelaQuizesProntos(this);
-        telaEditarMaterial  = new TelaEditarMaterial(this);
-
         painelTelas.add(telaEscolherQuiz,        TELA_ESCOLHER_QUIZ);
         painelTelas.add(telaPergunta,            TELA_PERGUNTA);
         painelTelas.add(telaDesempenho,          TELA_DESEMPENHO);
@@ -78,7 +74,6 @@ public class JanelaJogo extends JFrame {
         painelTelas.add(new TelaMateria(this),   TELA_MATERIA);
         painelTelas.add(new TelaCriarQuiz(this), TELA_CRIAR_QUIZ);
         painelTelas.add(telaQuizesProntos,       TELA_QUIZES_PRONTOS);
-        painelTelas.add(telaEditarMaterial,      TELA_EDITAR_MATERIAL);
 
         addWindowListener(new WindowAdapter() {
             @Override
@@ -150,11 +145,6 @@ public class JanelaJogo extends JFrame {
         mostrarTela(TELA_QUIZES_PRONTOS);
     }
 
-    public void abrirEditarMaterial() {
-        telaEditarMaterial.carregarMateriais();
-        mostrarTela(TELA_EDITAR_MATERIAL);
-    }
-
     private void carregarQuizzesDoBanco() {
         String sqlQ = "SELECT id_quiz, nome, dificuldade, criado_por FROM quizzes ORDER BY id_quiz";
         String sqlP = "SELECT enunciado, opcao_a, opcao_b, opcao_c, opcao_d, " +
@@ -185,6 +175,7 @@ public class JanelaJogo extends JFrame {
                 }
 
                 Quiz quiz = new Quiz(nome, dif, criadoPor);
+                quiz.setId(idQuiz);
 
                 try (PreparedStatement psP = con.prepareStatement(sqlP)) {
                     psP.setInt(1, idQuiz);
