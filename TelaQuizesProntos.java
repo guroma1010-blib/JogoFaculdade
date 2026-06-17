@@ -225,9 +225,10 @@ public class TelaQuizesProntos extends JPanel {
             lblNum.setForeground(JanelaJogo.COR_TEXTO_CINZA);
             lblNum.setPreferredSize(new Dimension(24, 24));
 
-            String textoEnunciado = p.getEnunciado().length() > 90
-                ? p.getEnunciado().substring(0, 90) + "…"
-                : p.getEnunciado();
+            String rawEnunciado = p.getEnunciado() != null ? p.getEnunciado() : "";
+            String textoEnunciado = rawEnunciado.length() > 90
+                ? rawEnunciado.substring(0, 90) + "…"
+                : rawEnunciado;
             JLabel lblEnunciado = new JLabel(textoEnunciado);
             lblEnunciado.setFont(new Font("Segoe UI", Font.PLAIN, 13));
 

@@ -144,6 +144,8 @@ public class JanelaJogo extends JFrame {
     }
 
     public void abrirQuizesProntos() {
+        quizzes = DadosDemostracao.criarQuizzesDemostracao();
+        carregarQuizzesDoBanco();
         telaQuizesProntos.carregarQuizzes();
         mostrarTela(TELA_QUIZES_PRONTOS);
     }
@@ -177,7 +179,7 @@ public class JanelaJogo extends JFrame {
 
                 Quiz.Dificuldade dif;
                 try {
-                    dif = Quiz.Dificuldade.valueOf(difStr);
+                    dif = (difStr != null) ? Quiz.Dificuldade.valueOf(difStr) : Quiz.Dificuldade.FACIL;
                 } catch (IllegalArgumentException ex) {
                     dif = Quiz.Dificuldade.FACIL;
                 }

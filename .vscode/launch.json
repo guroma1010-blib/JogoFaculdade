@@ -3,6 +3,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "Main",
+            "request": "launch",
+            "mainClass": "Main",
+            "projectName": "JogoFaculdade_fe953a02"
+        },
+        {
+            "type": "java",
             "name": "JanelaJogo",
             "request": "launch",
             "mainClass": "JanelaJogo",
